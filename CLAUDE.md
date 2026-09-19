@@ -27,7 +27,7 @@ max line length 120. `gdlint src tests` runs in CI.
 
 ## Godot on this machine
 
-Godot 4.7.2 is at `F:APPSGODOTGodot_v4.7.2-stable_win64_console.exe` (not on PATH).
+Godot 4.7.2 is at `F:\APPS\GODOT\Godot_v4.7.2-stable_win64_console.exe` (not on PATH).
 Useful headless commands from the project root:
 
 - `--headless --import` — validate scenes, resources and script classes
