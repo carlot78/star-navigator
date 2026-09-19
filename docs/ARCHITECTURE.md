@@ -8,7 +8,7 @@ Requirements referenced as `FR-…`/`NFR-…` are in [REQUIREMENTS.md](REQUIREME
 
 | Decision | Choice | Why | Alternatives considered |
 | --- | --- | --- | --- |
-| Engine | **Godot 4.4+** | Free, open source, first-class 2D, native Android/iOS/Web export, small runtime, no licensing. | Web + PixiJS (closest to the author's previous projects, but weaker physics/particles and store packaging); Flutter + Flame; Unity (licensing, heavy). |
+| Engine | **Godot 4.7+** | Free, open source, first-class 2D, native Android/iOS/Web export, small runtime, no licensing. | Web + PixiJS (closest to the author's previous projects, but weaker physics/particles and store packaging); Flutter + Flame; Unity (licensing, heavy). |
 | Language | **GDScript**, statically typed (`var x: int`, `-> void`) | Fastest iteration inside the editor; typed code is checked by the parser and runs faster. | C# (better tooling, but slower Godot exports on mobile and a second toolchain). |
 | Renderer | **GL Compatibility** (OpenGL ES 3.0 / WebGL 2) | Widest device coverage, required for Web export, sufficient for 2D. | Forward Mobile (Vulkan) — reconsider only if a 2D effect needs it. |
 | Orientation | **Landscape**, sensor-rotated | Combat needs two thumbs and a wide arena. | Portrait would suit the map but cripples combat. |

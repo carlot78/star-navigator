@@ -20,13 +20,13 @@ Foundation** (project skeleton, documents, autosave round-trip).
 
 ## Stack
 
-- [Godot 4.4+](https://godotengine.org/), GDScript, GL Compatibility renderer, landscape.
+- [Godot 4.7+](https://godotengine.org/), GDScript, GL Compatibility renderer, landscape.
 - Content as Godot Resources under `data/`; saves as versioned JSON.
 - CI: `gdlint`; Web playtest export and Android builds arrive in M1.
 
 ## Run
 
-1. Install Godot 4.4 or later (standard build, no .NET needed).
+1. Install Godot 4.7 or later (standard build, no .NET needed).
 2. Open `project.godot` in the editor and press **Play** (F5). Mouse input is
    emulated as touch.
 3. To try it on a phone: from M1 a Web build is published on every push to `main`;

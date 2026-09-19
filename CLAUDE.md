@@ -1,6 +1,6 @@
 # Star Navigator — working notes for Claude
 
-Godot 4.4+ / GDScript mobile game. Read `docs/ARCHITECTURE.md` before touching
+Godot 4.7 / GDScript mobile game. Read `docs/ARCHITECTURE.md` before touching
 structure and `docs/ROADMAP.md` before starting a feature; the current milestone is
 the first one without ✅ in the roadmap overview table.
 
@@ -25,8 +25,14 @@ GDScript style guide: tabs, static typing everywhere, `## ` doc comments on clas
 and public methods, enums before consts before vars (gdlint `class-definitions-order`),
 max line length 120. `gdlint src tests` runs in CI.
 
-## Godot is not installed on the dev machine used for scaffolding
+## Godot on this machine
 
-Scenes and resources may have been written by hand; the first time the editor opens
-the project it may rewrite `.tscn`/`.tres` with `uid=` attributes and generate
-`.uid` files — commit those.
+Godot 4.7.2 is at `F:APPSGODOTGodot_v4.7.2-stable_win64_console.exe` (not on PATH).
+Useful headless commands from the project root:
+
+- `--headless --import` — validate scenes, resources and script classes
+- `--headless --quit-after 180` — boot the main scene for a few frames
+- `--headless -s res://path/to/script.gd` — run a `SceneTree` script; autoloads are
+  reached with `root.get_node("GameState")`, not by name
+
+Commit the `.uid` and `.import` files the editor generates.
