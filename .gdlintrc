@@ -1,0 +1,3 @@
+# gdtoolkit (gdlint) configuration - https://github.com/Scony/godot-gdscript-toolkit
+max-line-length: 120
+max-file-lines: 1000

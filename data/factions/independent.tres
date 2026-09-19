@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="FactionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/faction_data.gd" id="1_faction"]
+
+[resource]
+script = ExtResource("1_faction")
+id = "independent"
+display_name = "Independents"
+description = "Free traders, prospectors and the ports that serve them. Nobody's friend, nobody's enemy, everybody's customer."
+color = Color(0.75, 0.8, 0.85, 1)
+hull_pool = Array[String](["kestrel"])
+starting_reputation = 10

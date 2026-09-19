@@ -1,0 +1,45 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Star Navigator"
+config/description="A touch-first space RPG/strategy game for phones: fly, fight, trade and explore an open sector with your fleet."
+config/version="0.1.0"
+run/main_scene="res://src/ui/main_menu/main_menu.tscn"
+config/features=PackedStringArray("4.4", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+EventBus="*res://src/core/event_bus.gd"
+Settings="*res://src/core/settings.gd"
+DataRegistry="*res://src/core/data_registry.gd"
+GameState="*res://src/core/game_state.gd"
+SaveService="*res://src/core/save_service.gd"
+SceneRouter="*res://src/core/scene_router.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=4
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

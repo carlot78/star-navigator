@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/weapon_data.gd" id="1_weapon"]
+
+[resource]
+script = ExtResource("1_weapon")
+id = "light_autocannon"
+display_name = "Light Autocannon"
+description = "Reliable small ballistic mount. Kinetic rounds that chew through shields and do little against armour."
+size = 0
+mount = 0
+damage = 50.0
+damage_type = 0
+range = 600.0
+projectile_speed = 900.0
+refire_delay = 0.4
+ammo = 0
+flux_per_shot = 40.0
+ordnance_cost = 4
+base_price = 1200

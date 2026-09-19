@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/campaign/campaign.gd" id="1_campaign"]
+
+[node name="Campaign" type="Node2D"]
+script = ExtResource("1_campaign")
+
+[node name="Camera" type="Camera2D" parent="."]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Margin" type="MarginContainer" parent="HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="TopBar" type="HBoxContainer" parent="HUD/Margin"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 24
+
+[node name="Back" type="Button" parent="HUD/Margin/TopBar"]
+custom_minimum_size = Vector2(120, 48)
+layout_mode = 2
+text = "Menu"
+
+[node name="Status" type="Label" parent="HUD/Margin/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Day 1 - 0 cr"
+vertical_alignment = 1
+
+[node name="Placeholder" type="Label" parent="HUD/Margin"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.5, 0.55, 0.65, 1)
+text = "Campaign scene - the star system arrives in milestone M1"
+horizontal_alignment = 1
