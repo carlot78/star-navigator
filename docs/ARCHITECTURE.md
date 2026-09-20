@@ -15,7 +15,7 @@ Requirements referenced as `FR-…`/`NFR-…` are in [REQUIREMENTS.md](REQUIREME
 | Base resolution | 1280×720, stretch `canvas_items`, aspect `expand` | UI designed at 720p scales crisply; `expand` uses the full width of 20:9 phones. | Fixed aspect with letterboxing. |
 | Content format | Godot **Resources** (`.tres`) with typed `class_name` scripts | Editable in the inspector, typed, validated at load, diffable text. | JSON (no editor support, untyped). |
 | Save format | **JSON** in `user://saves/`, versioned | Human-readable, survives script refactors (a `.tres` save breaks when a class changes), easy to migrate. | Binary `ResourceSaver` (fragile across versions). |
-| Tests | **gdUnit4** | Runs headless in CI, supports scene and pure-logic tests. | GUT. |
+| Tests | **In-repo runner** (`tests/run_tests.gd` + `TestCase`, ~100 lines) | Model classes need only assertions and a headless loop; no addon to download or keep in step with the engine, one `-s` command locally and in CI. | gdUnit4, GUT (both editor addons; adopt one if scene-level tests or reports are ever needed). |
 | CI | GitHub Actions: `gdlint`, later gdUnit4 and Web/Android exports | Same host as the repository; Web export publishes a playtest build to GitHub Pages. | — |
 
 ## 2. Repository layout
@@ -32,11 +32,13 @@ star-navigator/
 │   ├── combat/            Battle scene, ship controllers, weapons, AI
 │   ├── fleet/             ShipInstance, refit rules, repairs, salvage
 │   ├── economy/           Markets, commodities, prices, missions
-│   └── ui/                Screens and reusable controls, one folder per screen;
-│       └── theme/         the single Theme resource, virtual joystick
+│   └── ui/                Screens, overlays and shared presentation (follow_camera.gd,
+│       │                  starfield.gd, safe_area.gd), one folder per screen
+│       ├── controls/      Reusable controls (TouchJoystick)
+│       └── theme/         The single Theme resource
 ├── data/                  Content: one .tres per hull / weapon / faction / …
 ├── assets/                sprites/, audio/, fonts/ (see assets/README.md)
-├── tests/                 gdUnit4 tests for the model layer
+├── tests/                 run_tests.gd + unit/ (model tests), smoke.gd (boots every scene)
 ├── docs/                  This document, REQUIREMENTS.md, ROADMAP.md
 └── .github/workflows/     CI
 ```
@@ -191,15 +193,17 @@ Static content (`HullData`, `WeaponData`, `FactionData`) is referenced **by id**
 from the dynamic model, so saves contain `"hull": "kestrel"`, not a copy of the hull
 stats. Rebalancing a hull therefore applies to existing saves.
 
-## 4. Combat architecture (M2–M3)
+## 4. Combat architecture
+
+Shipped in M2 (1-vs-1); M3 adds fleets and orders on the same structure.
 
 ```mermaid
 flowchart TD
-    Input[Touch input: joystick / tap] --> PC[PlayerController]
-    AI[ShipAI per NPC ship] --> Cmd
-    PC --> Cmd[ShipCommand: thrust, turn, shield, fire groups]
+    Input[Touch input: TouchJoystick / taps] --> PC[combat.gd _player_command]
+    AI[ShipAI.decide per enemy ship] --> Cmd
+    PC --> Cmd[ShipCommand: move, face, aim, fire, shield, vent]
     Cmd --> Sim[CombatSim.step delta]
-    Sim --> Ships[ShipState: pos, vel, flux, hull, armour cells]
+    Sim --> Ships[ShipState: pos, vel, heading, flux, hull, armour quadrants]
     Sim --> Proj[Projectiles]
     Proj -->|hit| Dmg[DamageResolver: shield → armour → hull]
     Dmg --> Ships
@@ -207,19 +211,33 @@ flowchart TD
     Sim -->|end condition| Result[BattleResult] --> EB[EventBus.battle_ended]
 ```
 
-- `CombatSim` is a model class stepped at the physics rate (60 Hz). Ships are
-  kinematic in the sim; the scene mirrors positions into `Node2D`s. Godot physics is
-  used only for hit detection (`Area2D` on projectiles) in early milestones and can
-  be replaced by sim-side circle tests if determinism demands it.
-- **Damage pipeline** (FR-CBT-2/3): shield arc check → flux added (× shield
-  efficiency, × damage-type modifier) → else armour cell hit (damage reduced by armour
-  value, armour depleted) → remaining to hull. Weapon stats come from `WeaponData`,
-  never from the scene.
-- **AI** is a small behaviour tree per ship: choose target, keep preferred range,
-  raise shield when threatened, vent flux when safe, obey the fleet order (engage /
-  hold / retreat). Orders come from the command overlay (FR-CBT-5).
-- **Touch controls** (FR-UX-2) are a reusable `VirtualJoystick` control and a
-  `TapTarget` mode; both produce the same `ShipCommand`.
+- `CombatSim` is a model class stepped at the physics rate (60 Hz) with a
+  `ShipCommand` per ship as its only input. Ships are kinematic (omnidirectional
+  thrust toward `move`, bow turned toward `face`); hit detection is a sim-side circle
+  test per projectile, so no Godot physics is involved and a battle is reproducible
+  from its commands (`test_determinism`).
+- **Damage pipeline** (`DamageResolver`, FR-CBT-2/3): shield covers the impact
+  direction → flux += damage × shield modifier × shield efficiency (max flux ⇒
+  overload for 4 s, shield drops); else the armour quadrant (front/right/back/left)
+  reduces the hit by `d / (d + armour)` (floor 15 %), loses that much armour, and the
+  reduced hit reaches the hull. Modifiers: kinetic 2×/0.5×/1×, HE 0.5×/2×/1×, energy
+  1×, fragmentation 0.25×/0.25×/1× (shield/armour/hull). Weapon stats come from
+  `WeaponData`, never from the scene.
+- **AI** (`ShipAI.decide`, static, pure): nearest enemy, hold 70 % of the longest
+  weapon range (approach / back off / orbit), shield when a shot is inbound or the
+  enemy is in range and flux < 85 %, vent above 65 % flux when nothing is inbound,
+  retreat (back away shield-first, escape at the arena edge) under 25 % hull. Fleet
+  orders (engage / hold / retreat) are layered on in M3 (FR-CBT-5).
+- **Touch controls** (FR-UX-2): `TouchJoystick` (ui/controls) gives `move`; in tap
+  mode a tapped point becomes the move target. In both schemes the ship faces its
+  target (tapped enemy, else nearest) so guns and shield point at it, and FIRE /
+  SHIELD / VENT are HUD toggles. `combat.gd` turns all of it into one `ShipCommand`
+  per tick — the same type the AI produces.
+- **Battle context and result**: `GameState.battle` (transient, never saved) holds
+  `{player: [{hull, fit}], enemy: [...], return_to}`; the scene emits
+  `EventBus.battle_ended({outcome, time, ships, return_to})` and routes to
+  `return_to`. The title-screen Skirmish uses `return_to = "main_menu"`; the
+  campaign (M4) sets `"campaign"` and applies the result.
 
 ## 5. Campaign architecture
 
@@ -299,7 +317,7 @@ Planned for M4+:
 | --- | --- | --- |
 | Static | `gdlint` (gdtoolkit) on `src/` and `tests/` | Every push |
 | Smoke | `tests/smoke.gd`, a `SceneTree` script run headless in the `barichello/godot-ci` container: model checks, every scene instantiates, a simulated tap moves the ship, save round-trip | Every push |
-| Unit | gdUnit4 on `tests/**` — model classes only | From M2 |
+| Unit | `tests/run_tests.gd` runs every `tests/unit/test_*.gd` (extends `TestCase`; `test_*` methods; `assert_eq`, `assert_almost`, …) — model classes only, builders in `tests/unit/helpers.gd` | Every push |
 | Export | Godot headless export in CI: Web → GitHub Pages (https://carlot78.github.io/star-navigator/), Android debug APK as a workflow artifact (experimental) | Every push to `main` |
 | Manual | Milestone checklist on the reference phone (NFR-1/2/5) | End of every milestone |
 

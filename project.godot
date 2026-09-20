@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Star Navigator"
 config/description="A touch-first space RPG/strategy game for phones: fly, fight, trade and explore an open sector with your fleet."
-config/version="0.2.0"
+config/version="0.3.0"
 run/main_scene="res://src/ui/main_menu/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/weapon_data.gd" id="1_weapon"]
+
+[resource]
+script = ExtResource("1_weapon")
+id = "ion_lance"
+display_name = "Ion Lance"
+description = "Medium energy mount with reach. A straight trade of flux for damage at range."
+size = 1
+mount = 1
+damage = 140.0
+damage_type = 2
+range = 750.0
+projectile_speed = 1300.0
+refire_delay = 0.9
+ammo = 0
+flux_per_shot = 130.0
+ordnance_cost = 9
+base_price = 5200

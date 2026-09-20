@@ -26,3 +26,8 @@ func open() -> void:
 func close() -> void:
 	hide()
 	get_tree().paused = false
+
+
+## The last button means different things per mode ("Save & quit", "Retreat").
+func set_quit_label(text: String) -> void:
+	_quit.text = text

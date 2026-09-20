@@ -1,0 +1,179 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://src/combat/combat.gd" id="1_combat"]
+[ext_resource type="Script" path="res://src/combat/battle_effects.gd" id="2_effects"]
+[ext_resource type="Script" path="res://src/ui/follow_camera.gd" id="3_camera"]
+[ext_resource type="Script" path="res://src/ui/starfield.gd" id="4_starfield"]
+[ext_resource type="Script" path="res://src/ui/controls/touch_joystick.gd" id="5_joystick"]
+[ext_resource type="PackedScene" path="res://src/ui/pause_menu/pause_menu.tscn" id="6_pause"]
+[ext_resource type="PackedScene" path="res://src/ui/settings_menu/settings_menu.tscn" id="7_settings"]
+[ext_resource type="PackedScene" path="res://src/ui/battle_result/battle_result.tscn" id="8_result"]
+
+[node name="Combat" type="Node2D"]
+script = ExtResource("1_combat")
+
+[node name="Effects" type="Node2D" parent="."]
+script = ExtResource("2_effects")
+
+[node name="Ships" type="Node2D" parent="."]
+
+[node name="Camera" type="Camera2D" parent="."]
+script = ExtResource("3_camera")
+
+[node name="Starfield" type="Node2D" parent="Camera"]
+script = ExtResource("4_starfield")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+process_mode = 3
+
+[node name="SafeArea" type="MarginContainer" parent="HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Root" type="Control" parent="HUD/SafeArea"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TopBar" type="HBoxContainer" parent="HUD/SafeArea/Root"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/separation = 24
+
+[node name="Pause" type="Button" parent="HUD/SafeArea/Root/TopBar"]
+custom_minimum_size = Vector2(120, 48)
+layout_mode = 2
+size_flags_vertical = 0
+text = "Pause"
+
+[node name="PlayerBars" type="VBoxContainer" parent="HUD/SafeArea/Root/TopBar"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Status" type="Label" parent="HUD/SafeArea/Root/TopBar/PlayerBars"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Kestrel"
+
+[node name="Hull" type="ProgressBar" parent="HUD/SafeArea/Root/TopBar/PlayerBars"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+value = 100.0
+show_percentage = false
+
+[node name="Flux" type="ProgressBar" parent="HUD/SafeArea/Root/TopBar/PlayerBars"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+show_percentage = false
+
+[node name="Spacer" type="Control" parent="HUD/SafeArea/Root/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="TargetBars" type="VBoxContainer" parent="HUD/SafeArea/Root/TopBar"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="HUD/SafeArea/Root/TopBar/TargetBars"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.7, 0.62, 1)
+theme_override_font_sizes/font_size = 16
+text = "Target"
+horizontal_alignment = 2
+
+[node name="Hull" type="ProgressBar" parent="HUD/SafeArea/Root/TopBar/TargetBars"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+mouse_filter = 2
+value = 100.0
+show_percentage = false
+
+[node name="Flux" type="ProgressBar" parent="HUD/SafeArea/Root/TopBar/TargetBars"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+mouse_filter = 2
+show_percentage = false
+
+[node name="Joystick" type="Control" parent="HUD/SafeArea/Root"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -240.0
+offset_right = 240.0
+grow_vertical = 0
+script = ExtResource("5_joystick")
+
+[node name="Hint" type="Label" parent="HUD/SafeArea/Root"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -32.0
+offset_right = 240.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.6, 0.66, 0.8, 1)
+theme_override_font_sizes/font_size = 16
+text = "Tap an enemy to target it, tap open space to fly there"
+horizontal_alignment = 1
+
+[node name="Buttons" type="VBoxContainer" parent="HUD/SafeArea/Root"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -204.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 12
+
+[node name="Fire" type="Button" parent="HUD/SafeArea/Root/Buttons"]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+toggle_mode = true
+text = "FIRE"
+
+[node name="Shield" type="Button" parent="HUD/SafeArea/Root/Buttons"]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+toggle_mode = true
+text = "SHIELD"
+
+[node name="Vent" type="Button" parent="HUD/SafeArea/Root/Buttons"]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+toggle_mode = true
+text = "VENT"
+
+[node name="PauseMenu" parent="HUD" instance=ExtResource("6_pause")]
+visible = false
+
+[node name="SettingsMenu" parent="HUD" instance=ExtResource("7_settings")]
+visible = false
+
+[node name="BattleResult" parent="HUD" instance=ExtResource("8_result")]
+visible = false

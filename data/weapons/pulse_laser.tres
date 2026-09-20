@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/weapon_data.gd" id="1_weapon"]
+
+[resource]
+script = ExtResource("1_weapon")
+id = "pulse_laser"
+display_name = "Pulse Laser"
+description = "Small energy mount with a quick pulse. Even damage against everything, hungry for flux."
+size = 0
+mount = 1
+damage = 60.0
+damage_type = 2
+range = 550.0
+projectile_speed = 1100.0
+refire_delay = 0.5
+ammo = 0
+flux_per_shot = 55.0
+ordnance_cost = 5
+base_price = 2000

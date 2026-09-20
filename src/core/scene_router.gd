@@ -5,6 +5,7 @@ extends Node
 const SCENES := {
 	"main_menu": "res://src/ui/main_menu/main_menu.tscn",
 	"campaign": "res://src/campaign/campaign.tscn",
+	"combat": "res://src/combat/combat.tscn",
 }
 
 

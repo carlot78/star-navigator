@@ -49,6 +49,11 @@ custom_minimum_size = Vector2(280, 56)
 layout_mode = 2
 text = "Continue"
 
+[node name="Skirmish" type="Button" parent="Center/VBox"]
+custom_minimum_size = Vector2(280, 56)
+layout_mode = 2
+text = "Skirmish"
+
 [node name="Settings" type="Button" parent="Center/VBox"]
 custom_minimum_size = Vector2(280, 56)
 layout_mode = 2

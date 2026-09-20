@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/weapon_data.gd" id="1_weapon"]
+
+[resource]
+script = ExtResource("1_weapon")
+id = "swarm_rockets"
+display_name = "Swarm Rockets"
+description = "Small missile rack firing unguided high-explosive rockets. Limited ammunition, almost no flux."
+size = 0
+mount = 2
+damage = 90.0
+damage_type = 1
+range = 800.0
+projectile_speed = 500.0
+refire_delay = 1.2
+ammo = 24
+flux_per_shot = 5.0
+ordnance_cost = 5
+base_price = 1800

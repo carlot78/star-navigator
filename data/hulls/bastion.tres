@@ -1,0 +1,63 @@
+[gd_resource type="Resource" script_class="HullData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://src/data/hull_data.gd" id="1_hull"]
+[ext_resource type="Script" path="res://src/data/weapon_slot_data.gd" id="2_slot"]
+
+[sub_resource type="Resource" id="Resource_slot_main"]
+script = ExtResource("2_slot")
+id = "main"
+position = Vector2(20, 0)
+angle = 0.0
+arc = 60.0
+size = 1
+mount = 0
+
+[sub_resource type="Resource" id="Resource_slot_port"]
+script = ExtResource("2_slot")
+id = "port"
+position = Vector2(-4, -20)
+angle = -45.0
+arc = 200.0
+size = 0
+mount = 0
+
+[sub_resource type="Resource" id="Resource_slot_starboard"]
+script = ExtResource("2_slot")
+id = "starboard"
+position = Vector2(-4, 20)
+angle = 45.0
+arc = 200.0
+size = 0
+mount = 0
+
+[sub_resource type="Resource" id="Resource_slot_rack"]
+script = ExtResource("2_slot")
+id = "rack"
+position = Vector2(-16, 0)
+angle = 0.0
+arc = 40.0
+size = 0
+mount = 2
+
+[resource]
+script = ExtResource("1_hull")
+id = "bastion"
+display_name = "Bastion"
+description = "A slow, heavily armoured destroyer with a forward medium ballistic mount. Takes a beating and gives one back."
+size = 1
+hull_points = 5000.0
+armor = 400.0
+max_flux = 5000.0
+flux_dissipation = 300.0
+shield_arc = 210.0
+shield_efficiency = 1.1
+max_speed = 80.0
+acceleration = 50.0
+turn_rate = 40.0
+ordnance_points = 80
+weapon_slots = Array[ExtResource("2_slot")]([SubResource("Resource_slot_main"), SubResource("Resource_slot_port"), SubResource("Resource_slot_starboard"), SubResource("Resource_slot_rack")])
+crew = 60
+fuel_per_jump = 2.0
+supplies_per_month = 5.0
+cargo = 60
+base_price = 55000

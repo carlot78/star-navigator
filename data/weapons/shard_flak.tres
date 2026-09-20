@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/weapon_data.gd" id="1_weapon"]
+
+[resource]
+script = ExtResource("1_weapon")
+id = "shard_flak"
+display_name = "Shard Flak"
+description = "Small ballistic mount spraying fragmentation shards. Shreds bare hull, bounces off armour and shields."
+size = 0
+mount = 0
+damage = 35.0
+damage_type = 3
+range = 450.0
+projectile_speed = 850.0
+refire_delay = 0.25
+ammo = 0
+flux_per_shot = 20.0
+ordnance_cost = 3
+base_price = 900

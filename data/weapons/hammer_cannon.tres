@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/weapon_data.gd" id="1_weapon"]
+
+[resource]
+script = ExtResource("1_weapon")
+id = "hammer_cannon"
+display_name = "Hammer Cannon"
+description = "Medium ballistic mount firing slow high-explosive shells. Cracks armour; wasted on shields."
+size = 1
+mount = 0
+damage = 220.0
+damage_type = 1
+range = 700.0
+projectile_speed = 700.0
+refire_delay = 1.6
+ammo = 0
+flux_per_shot = 180.0
+ordnance_cost = 10
+base_price = 4500

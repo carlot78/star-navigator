@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://src/campaign/campaign.gd" id="1_campaign"]
 [ext_resource type="PackedScene" path="res://src/campaign/system/star_system.tscn" id="2_system"]
 [ext_resource type="PackedScene" path="res://src/campaign/player_ship.tscn" id="3_ship"]
-[ext_resource type="Script" path="res://src/campaign/campaign_camera.gd" id="4_camera"]
-[ext_resource type="Script" path="res://src/campaign/starfield.gd" id="5_starfield"]
+[ext_resource type="Script" path="res://src/ui/follow_camera.gd" id="4_camera"]
+[ext_resource type="Script" path="res://src/ui/starfield.gd" id="5_starfield"]
 [ext_resource type="PackedScene" path="res://src/ui/pause_menu/pause_menu.tscn" id="6_pause"]
 [ext_resource type="PackedScene" path="res://src/ui/settings_menu/settings_menu.tscn" id="7_settings"]
 

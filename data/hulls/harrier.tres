@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="HullData" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://src/data/hull_data.gd" id="1_hull"]
+[ext_resource type="Script" path="res://src/data/weapon_slot_data.gd" id="2_slot"]
+
+[sub_resource type="Resource" id="Resource_slot_left"]
+script = ExtResource("2_slot")
+id = "left"
+position = Vector2(8, -10)
+angle = -10.0
+arc = 120.0
+size = 0
+mount = 1
+
+[sub_resource type="Resource" id="Resource_slot_right"]
+script = ExtResource("2_slot")
+id = "right"
+position = Vector2(8, 10)
+angle = 10.0
+arc = 120.0
+size = 0
+mount = 1
+
+[sub_resource type="Resource" id="Resource_slot_rack"]
+script = ExtResource("2_slot")
+id = "rack"
+position = Vector2(-6, 0)
+angle = 0.0
+arc = 40.0
+size = 0
+mount = 2
+
+[resource]
+script = ExtResource("1_hull")
+id = "harrier"
+display_name = "Harrier"
+description = "A fast interceptor built around two energy mounts and a missile rack. Burns flux quickly; wins by never standing still."
+size = 0
+hull_points = 1600.0
+armor = 100.0
+max_flux = 2800.0
+flux_dissipation = 260.0
+shield_arc = 120.0
+shield_efficiency = 0.9
+max_speed = 170.0
+acceleration = 130.0
+turn_rate = 100.0
+ordnance_points = 45
+weapon_slots = Array[ExtResource("2_slot")]([SubResource("Resource_slot_left"), SubResource("Resource_slot_right"), SubResource("Resource_slot_rack")])
+crew = 15
+fuel_per_jump = 1.0
+supplies_per_month = 2.5
+cargo = 20
+base_price = 24000

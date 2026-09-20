@@ -67,15 +67,15 @@ requirement is first delivered (see [ROADMAP.md](ROADMAP.md)).
 
 | ID | Requirement | Pri | Milestone |
 | --- | --- | --- | --- |
-| FR-CBT-1 | Battles are real-time, top-down, in a bounded arena; the player pilots one flagship with a virtual joystick (movement) and a fire button/tap-to-target (weapons). | M | M2 |
-| FR-CBT-2 | Ships have hull points, armour (per-cell or per-side damage reduction), shields (an arc that absorbs damage as flux) and a flux pool with dissipation; reaching max flux overloads the ship for a few seconds. | M | M2 |
-| FR-CBT-3 | Weapons have size, mount type, damage, damage type (kinetic ×2 vs shields, high-explosive ×2 vs armour, energy neutral, fragmentation weak vs both), range, refire delay and flux cost. | M | M2 |
-| FR-CBT-4 | Enemy ships are driven by an AI that manages range, shields and flux and that can be told to aggressively engage, hold or retreat. | M | M2 (1 ship), M3 (fleet) |
+| FR-CBT-1 | Battles are real-time, top-down, in a bounded arena; the player pilots one flagship with a virtual joystick (movement) and a fire button/tap-to-target (weapons). | M | ✅ M2 |
+| FR-CBT-2 | Ships have hull points, armour (per-cell or per-side damage reduction), shields (an arc that absorbs damage as flux) and a flux pool with dissipation; reaching max flux overloads the ship for a few seconds. | M | ✅ M2 |
+| FR-CBT-3 | Weapons have size, mount type, damage, damage type (kinetic ×2 vs shields, high-explosive ×2 vs armour, energy neutral, fragmentation weak vs both), range, refire delay and flux cost. | M | ✅ M2 |
+| FR-CBT-4 | Enemy ships are driven by an AI that manages range, shields and flux and that can be told to aggressively engage, hold or retreat. | M | ✅ M2 (1 ship), M3 (fleet) |
 | FR-CBT-5 | Fleet battles: both sides deploy several ships; the player issues simple orders to allies (engage target, defend point, retreat) through a pause-able command view. | M | M3 |
-| FR-CBT-6 | A battle ends in victory, defeat or retreat; the result (losses, damage, salvage) flows back to the campaign. | M | M2 |
+| FR-CBT-6 | A battle ends in victory, defeat or retreat; the result (losses, damage, salvage) flows back to the campaign. | M | ✅ M2 (result flows to EventBus.battle_ended; the campaign consumes it in M4) |
 | FR-CBT-7 | Fighter wings launched from carriers, with their own AI. | C | M8 |
 | FR-CBT-8 | Ship systems (one active ability per hull: burn drive, phase skimmer, flare launcher…) on a cooldown, triggered by a button. | S | M5 |
-| FR-CBT-9 | Combat can be paused at any time; losing app focus pauses automatically. | M | M2 |
+| FR-CBT-9 | Combat can be paused at any time; losing app focus pauses automatically. | M | ✅ M2 |
 
 ### 4.3 Fleet and refit
 
@@ -132,7 +132,7 @@ requirement is first delivered (see [ROADMAP.md](ROADMAP.md)).
 | ID | Requirement | Pri | Milestone |
 | --- | --- | --- | --- |
 | FR-UX-1 | All interaction works with touch alone: minimum touch target 48 dp, no hover-only information, no keyboard needed. | M | ✅ M1 |
-| FR-UX-2 | Two selectable combat control schemes: virtual joystick + fire button, and tap-to-move + tap-to-target. | M | M2 |
+| FR-UX-2 | Two selectable combat control schemes: virtual joystick + fire button, and tap-to-move + tap-to-target. | M | ✅ M2 |
 | FR-UX-3 | Landscape orientation; UI respects the display safe area (notches, rounded corners). | M | ✅ M1 |
 | FR-UX-4 | Tutorial: the first battle and the first docking are guided by short, dismissible hints. | S | M11 |
 | FR-UX-5 | Settings: master/music/sfx volume, control scheme, UI scale, haptics. | M | ✅ M1 |
@@ -159,7 +159,7 @@ requirement is first delivered (see [ROADMAP.md](ROADMAP.md)).
 | NFR-6 | **Deterministic simulation.** Sector generation and combat resolution depend only on the seed and inputs (fixed timestep, seeded RNG); no wall-clock dependence in game logic. | Unit tests replay a seed and compare. |
 | NFR-7 | **Offline and private.** No network access, no accounts, no analytics, no permissions beyond storage of its own files. | Android manifest review at each release. |
 | NFR-8 | **Data-driven content.** Hulls, weapons, factions, commodities and missions are Godot Resources / JSON under `data/`; adding content never requires code changes. | Code review rule; `DataRegistry` loads by folder. |
-| NFR-9 | **Testability.** Game rules (flux, damage, pricing, generation, migrations) are pure GDScript classes with no scene dependency and have unit tests. | gdUnit4 in CI from M2. |
+| NFR-9 | **Testability.** Game rules (flux, damage, pricing, generation, migrations) are pure GDScript classes with no scene dependency and have unit tests. | ✅ M2: `tests/unit/` run headless in CI by `tests/run_tests.gd`. |
 | NFR-10 | **Accessibility.** UI text at least 14 dp, colour is never the only carrier of information (faction colours are paired with icons/labels), UI scale setting 0.8–1.4. | Design checklist per screen. |
 | NFR-11 | **Localisation-ready.** All player-facing strings go through Godot's `tr()`; English is the source language. | Lint: no literal UI strings in `.tscn` after M11. |
 | NFR-12 | **Licensing.** Code MIT; every asset original or under a redistributable licence, credited in `CREDITS.md`. | PR checklist. |

@@ -2,7 +2,7 @@ extends SceneTree
 ## Headless smoke test, run by CI and locally with
 ##   godot --headless --path . -s res://tests/smoke.gd
 ## It exercises the model layer directly and boots every scene once.
-## gdUnit4 takes over the model tests in M2; this stays as the boot check.
+## Unit tests live in tests/unit (run_tests.gd); this stays as the boot check.
 
 var _failures: int = 0
 
@@ -15,6 +15,7 @@ func _run() -> void:
 	_test_ship_mover()
 	_test_all_scenes_load()
 	await _test_campaign_boot_and_tap()
+	await _test_combat_boot()
 	await _test_save_round_trip()
 	if _failures == 0:
 		print("SMOKE OK")
@@ -136,3 +137,37 @@ func _test_save_round_trip() -> void:
 	_check(hull != null and hull.weapon_slots.size() == 2, "kestrel hull loads with its slots")
 	DirAccess.remove_absolute(save_service.slot_path("smoke"))
 	await process_frame
+
+
+# --- combat ---------------------------------------------------------------
+
+
+func _test_combat_boot() -> void:
+	var game_state: Node = root.get_node("GameState")
+	game_state.battle = {
+		"return_to": "main_menu",
+		"player": [{"hull": "kestrel", "fit": {"nose": "light_autocannon", "turret": "shard_flak"}}],
+		"enemy": [{"hull": "harrier", "fit": {"left": "pulse_laser", "right": "pulse_laser"}}],
+	}
+	var combat: Node2D = (load("res://src/combat/combat.tscn") as PackedScene).instantiate()
+	root.add_child(combat)
+	await process_frame
+	var sim: CombatSim = combat.sim
+	_check(sim.ships.size() == 2, "combat spawns both ships")
+	_check(combat.get_node("Ships").get_child_count() == 2, "one view per ship")
+	var fire: Button = combat.get_node("HUD/SafeArea/Root/Buttons/Fire")
+	var shield: Button = combat.get_node("HUD/SafeArea/Root/Buttons/Shield")
+	fire.button_pressed = true
+	shield.button_pressed = true
+	for _i in 60 * 4:
+		await physics_frame
+	_check(sim.time > 3.0, "the sim advances with physics frames")
+	_check(sim.ships[0].shield_up, "the shield toggle raises the player shield")
+	var enemy := sim.ships[1]
+	_check(enemy.hull_points < enemy.hull.hull_points or enemy.flux > 0.0, "the player's guns reach the enemy")
+	_check(sim.ships[0].command.face != Vector2.ZERO, "the player ship faces its target")
+	combat.get_node("HUD/PauseMenu").open()
+	_check(paused, "combat pauses")
+	combat.get_node("HUD/PauseMenu").close()
+	combat.free()
+	game_state.battle = {}

@@ -1,6 +1,6 @@
 extends Node2D
 ## Procedural, endlessly tiling starfield with parallax. Meant to be a child
-## of the campaign camera: its origin is the screen centre, and each layer is
+## of the view camera: its origin is the screen centre, and each layer is
 ## shifted against the camera position by its depth, so far stars drift less
 ## than near ones. Tiles are generated once into textures, so a frame costs a
 ## handful of draw_texture calls.

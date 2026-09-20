@@ -13,7 +13,9 @@ the first one without ✅ in the roadmap overview table.
   forward input.
 - Changing `GameState.to_dict()` shape ⇒ bump `SAVE_VERSION` and add a migration arm
   in `SaveService._migrate()`.
-- Autoload scripts must not declare `class_name` (Godot forbids the clash).
+- Autoload scripts must not declare `class_name` (Godot forbids the clash). A
+  `class_name` must not shadow an engine class either (Godot 4.7 has a native
+  `VirtualJoystick`; ours is `TouchJoystick`).
 - Connect signals in `_ready()` in code, not inside `.tscn` files.
 - Every new requirement gets an `FR-`/`NFR-` id in `docs/REQUIREMENTS.md`; mark it
   done with the milestone when shipped.
@@ -32,8 +34,9 @@ Useful headless commands from the project root:
 
 - `--headless --import` — validate scenes, resources and script classes
 - `--headless --quit-after 180` — boot the main scene for a few frames
-- `--headless -s res://tests/smoke.gd` — the smoke test CI runs; extend it when adding a
-  scene or a model class. In `-s` scripts autoloads are reached with
+- `--headless -s res://tests/run_tests.gd` — unit tests (`tests/unit/test_*.gd` extend
+  `TestCase`); add a test file per new model class.
+- `--headless -s res://tests/smoke.gd` — boots every scene; extend it when adding a scene. In `-s` scripts autoloads are reached with
   `root.get_node("GameState")`, not by name.
 - `-s` with a script that saves `get_viewport().get_texture().get_image()` (no
   `--headless`) is the way to look at a scene: a window opens for a second.

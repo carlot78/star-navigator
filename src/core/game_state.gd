@@ -17,6 +17,9 @@ var seed: int = 0
 var fleet: Array = []
 ## Where the player fleet is: { "system": id, "position": [x, y] }.
 var location: Dictionary = {}
+## The battle about to be fought or in progress (see combat.gd _build for the
+## shape). Transient: set by whoever starts a battle, never saved.
+var battle: Dictionary = {}
 
 
 func new_game(p_seed: int = 0) -> void:

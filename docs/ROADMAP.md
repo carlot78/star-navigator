@@ -12,7 +12,7 @@ milestone must respect is in [ARCHITECTURE.md](ARCHITECTURE.md).
 | --- | --- | --- | --- | --- |
 | M0 | Foundation | Title screen → placeholder campaign → back, with autosave; CI lint | FR-SAV-1 (mechanism), FR-SAV-3, NFR-8 | ✅ done (2026-09-19) |
 | M1 | Flying | Fly one ship around a star system with touch; settings; Web playtest build | FR-CMP-2 (single ship), FR-UX-1/3/5/6 | ✅ done (2026-09-20) |
-| M2 | Combat core | 1-vs-1 battle: flux, shields, armour, weapons, AI, win/lose | FR-CBT-1/2/3/4/6/9, FR-UX-2, NFR-9 | ⬜ |
+| M2 | Combat core | 1-vs-1 battle: flux, shields, armour, weapons, AI, win/lose | FR-CBT-1/2/3/4/6/9, FR-UX-2, NFR-9 | ✅ done (2026-09-20) |
 | M3 | Fleet battles | Several ships per side, orders, retreat; benchmark scene | FR-CBT-5, NFR-1 | ⬜ |
 | M4 | Campaign | Generated sector, fleet travel, fuel/supplies, encounters that lead to battles, sector map, save slots | FR-CMP-1/3/4/5, FR-EXP-3, FR-ECO-4, FR-SAV-1/2/4 | ⬜ |
 | M5 | Fleet & refit | Ship instances, refit screen, repairs, salvage, ship systems | FR-FLT-1/2/3/4, FR-CBT-8 | ⬜ |
@@ -75,23 +75,33 @@ Shipped:
 - Not done: on-device measurement of NFR-1/2 (needs the reference phone); the Android
   export job has not yet been verified on a device.
 
-### M2 — Combat core
+### M2 — Combat core ✅
 
 Goal: prove that combat is fun with a thumb. Everything after depends on this.
 
-- `src/combat/sim/`: `CombatSim`, `ShipState`, `ProjectileState`,
-  `DamageResolver` as pure classes; fixed-timestep `step(delta)`; unit tests for the
-  flux/shield/armour maths and damage-type modifiers.
-- `src/combat/combat.tscn`: arena, ship sprites mirroring the sim, projectiles,
-  hit effects, HUD (flux bar, hull bar, weapon groups, shield toggle, pause).
-- `VirtualJoystick` control and `TapTarget` mode, selectable in settings.
-- `ShipAI` v1: keep range, shield when threatened, vent when safe, retreat under a
-  hull threshold.
-- Battle end → `BattleResult` → `EventBus.battle_ended`; a debug entry on the title
-  screen launches a battle directly ("Skirmish") so combat can be iterated without
-  the campaign.
-- 3 hulls, 6 weapons in `data/`.
-- gdUnit4 addon, CI runs tests headless. Tag `m2`.
+Shipped:
+
+- `src/combat/sim/`: `CombatSim`, `ShipState`, `ShipCommand`, `WeaponMount`,
+  `ProjectileState`, `DamageResolver`, `ShipAI` — pure classes stepped at the physics
+  rate; shields as flux, four armour quadrants with the 15 % floor, overload, venting,
+  arena bounds, retreat-by-leaving.
+- `combat.tscn`: ship views (silhouette, shield arc, overload flicker, hull/flux
+  readout), projectiles and hit flashes, follow camera with distance-based zoom, HUD
+  (hull/flux bars for player and target, FIRE / SHIELD / VENT toggles, pause), pause
+  on focus loss, battle-result overlay, `EventBus.battle_ended`.
+- `TouchJoystick` control (joystick scheme) and tap-to-move / tap-to-target (tap
+  scheme), switchable in settings mid-battle; the ship always faces its target.
+- `ShipAI` v1: approach, hold range, shield when shots are inbound, vent when safe,
+  retreat under 25 % hull.
+- Title-screen **Skirmish**: Kestrel vs an AI Harrier without the campaign.
+- Content: hulls Kestrel, Harrier, Bastion; weapons Light Autocannon, Hammer Cannon,
+  Pulse Laser, Ion Lance, Swarm Rockets, Shard Flak.
+- Tests: an in-repo runner (`tests/run_tests.gd` + `TestCase`) instead of the gdUnit4
+  addon — no download, no editor plugin, same headless CI path as the smoke test;
+  29 unit tests over the damage pipeline, the sim, the AI and the campaign mover.
+- Balance note: a fully passive player (shield up, guns on autofire) loses the
+  skirmish in about 20 s; tuning continues on the phone.
+- Not done: on-device feel test (needs the phone); hit effects are placeholders.
 
 ### M3 — Fleet battles
 

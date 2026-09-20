@@ -1,5 +1,5 @@
 extends Camera2D
-## Campaign camera: follows the player ship until the player pans, zooms
+## Follow camera for the campaign and combat views: follows a target node until the player pans, zooms
 ## around a screen anchor (pinch midpoint or mouse pointer), and can be
 ## re-attached with recenter().
 

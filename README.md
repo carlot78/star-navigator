@@ -7,9 +7,10 @@ inspired by the open-sector design of [Starsector](https://fractalsoftworks.com/
 (no assets, names or code from it are used — see
 [docs/REQUIREMENTS.md §7](docs/REQUIREMENTS.md#7-intellectual-property)).
 
-Built progressively, one playable milestone at a time. Latest milestone: **M1 —
-Flying** (fly one ship around a star system with touch, settings, pause, autosave).
-Next: **M2 — Combat core**.
+Built progressively, one playable milestone at a time. Latest milestone: **M2 —
+Combat core** (1-vs-1 real-time battle with flux, shields, armour, six weapons, an AI
+opponent, joystick or tap controls — try **Skirmish** on the title screen).
+Next: **M3 — Fleet battles**.
 
 **Play the latest build in a phone browser:** https://carlot78.github.io/star-navigator/
 (published by CI on every push to `main`; landscape, add to home screen for full screen).
@@ -26,15 +27,16 @@ Next: **M2 — Combat core**.
 
 - [Godot 4.7+](https://godotengine.org/), GDScript, GL Compatibility renderer, landscape.
 - Content as Godot Resources under `data/`; saves as versioned JSON.
-- CI: `gdlint`, headless smoke test (`tests/smoke.gd`), Web export to GitHub Pages, Android debug APK artifact.
+- CI: `gdlint`, headless unit tests (`tests/unit`) and smoke test (`tests/smoke.gd`), Web export to GitHub Pages, Android debug APK artifact.
 
 ## Run
 
 1. Install Godot 4.7 or later (standard build, no .NET needed).
 2. Open `project.godot` in the editor and press **Play** (F5). Mouse input is
    emulated as touch.
-3. Headless checks without the editor: `godot --headless --path . --import` then
-   `godot --headless --path . -s res://tests/smoke.gd`.
+3. Headless checks without the editor: `godot --headless --path . --import`, then
+   `godot --headless --path . -s res://tests/run_tests.gd` (unit tests) and
+   `godot --headless --path . -s res://tests/smoke.gd` (boots every scene).
 4. On a phone: open the GitHub Pages link above, or download the debug APK from the
    latest CI run (Actions → CI → artifacts), or use the editor.s one-click Android
    deploy (Editor → Export → Android, *Deploy with remote debug*).
@@ -45,13 +47,13 @@ Next: **M2 — Combat core**.
 src/core      autoload singletons: EventBus, Settings, DataRegistry, GameState, SaveService, SceneRouter
 src/data      Resource classes: HullData, WeaponSlotData, WeaponData, FactionData
 src/campaign  star system view, ship movement model, camera, starfield
-src/combat    battles (M2)
+src/combat    battle scene, ship views, effects; sim/ is the pure combat model
 src/fleet     ship instances, refit (M5)
 src/economy   markets, missions (M6)
-src/ui        title, pause and settings screens, theme, safe-area helper
+src/ui        title, pause, settings and battle-result screens; camera, starfield, joystick, theme
 data/         content: one .tres per hull / weapon / faction
 assets/       sprites, audio, fonts
-tests/        headless smoke test (gdUnit4 from M2)
+tests/        unit tests (run_tests.gd + unit/) and the smoke test
 ```
 
 ## License
