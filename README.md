@@ -7,8 +7,12 @@ inspired by the open-sector design of [Starsector](https://fractalsoftworks.com/
 (no assets, names or code from it are used — see
 [docs/REQUIREMENTS.md §7](docs/REQUIREMENTS.md#7-intellectual-property)).
 
-Built progressively, one playable milestone at a time. Current milestone: **M0 —
-Foundation** (project skeleton, documents, autosave round-trip).
+Built progressively, one playable milestone at a time. Latest milestone: **M1 —
+Flying** (fly one ship around a star system with touch, settings, pause, autosave).
+Next: **M2 — Combat core**.
+
+**Play the latest build in a phone browser:** https://carlot78.github.io/star-navigator/
+(published by CI on every push to `main`; landscape, add to home screen for full screen).
 
 ## Documents
 
@@ -22,30 +26,32 @@ Foundation** (project skeleton, documents, autosave round-trip).
 
 - [Godot 4.7+](https://godotengine.org/), GDScript, GL Compatibility renderer, landscape.
 - Content as Godot Resources under `data/`; saves as versioned JSON.
-- CI: `gdlint`; Web playtest export and Android builds arrive in M1.
+- CI: `gdlint`, headless smoke test (`tests/smoke.gd`), Web export to GitHub Pages, Android debug APK artifact.
 
 ## Run
 
 1. Install Godot 4.7 or later (standard build, no .NET needed).
 2. Open `project.godot` in the editor and press **Play** (F5). Mouse input is
    emulated as touch.
-3. To try it on a phone: from M1 a Web build is published on every push to `main`;
-   until then use the editor's one-click Android deploy (Editor → Export → Android,
-   *Deploy with remote debug*).
+3. Headless checks without the editor: `godot --headless --path . --import` then
+   `godot --headless --path . -s res://tests/smoke.gd`.
+4. On a phone: open the GitHub Pages link above, or download the debug APK from the
+   latest CI run (Actions → CI → artifacts), or use the editor.s one-click Android
+   deploy (Editor → Export → Android, *Deploy with remote debug*).
 
 ## Layout
 
 ```
 src/core      autoload singletons: EventBus, Settings, DataRegistry, GameState, SaveService, SceneRouter
 src/data      Resource classes: HullData, WeaponSlotData, WeaponData, FactionData
-src/campaign  star system view, travel, encounters
+src/campaign  star system view, ship movement model, camera, starfield
 src/combat    battles (M2)
 src/fleet     ship instances, refit (M5)
 src/economy   markets, missions (M6)
-src/ui        screens and theme
+src/ui        title, pause and settings screens, theme, safe-area helper
 data/         content: one .tres per hull / weapon / faction
 assets/       sprites, audio, fonts
-tests/        gdUnit4 tests (M2)
+tests/        headless smoke test (gdUnit4 from M2)
 ```
 
 ## License

@@ -8,6 +8,8 @@ signal game_started(new_game: bool)
 signal game_saved(slot: String)
 signal game_loaded(slot: String)
 signal scene_changed(scene_path: String)
+## Android back button or Escape: overlays close, then the pause menu opens.
+signal back_requested
 
 # Campaign
 signal day_passed(day: int)

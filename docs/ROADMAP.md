@@ -11,7 +11,7 @@ milestone must respect is in [ARCHITECTURE.md](ARCHITECTURE.md).
 | # | Milestone | Playable result | Requirements | Status |
 | --- | --- | --- | --- | --- |
 | M0 | Foundation | Title screen → placeholder campaign → back, with autosave; CI lint | FR-SAV-1 (mechanism), FR-SAV-3, NFR-8 | ✅ done (2026-09-19) |
-| M1 | Flying | Fly one ship around a star system with touch; settings; Web playtest build | FR-CMP-2 (single ship), FR-UX-1/3/5/6 | ⬜ |
+| M1 | Flying | Fly one ship around a star system with touch; settings; Web playtest build | FR-CMP-2 (single ship), FR-UX-1/3/5/6 | ✅ done (2026-09-20) |
 | M2 | Combat core | 1-vs-1 battle: flux, shields, armour, weapons, AI, win/lose | FR-CBT-1/2/3/4/6/9, FR-UX-2, NFR-9 | ⬜ |
 | M3 | Fleet battles | Several ships per side, orders, retreat; benchmark scene | FR-CBT-5, NFR-1 | ⬜ |
 | M4 | Campaign | Generated sector, fleet travel, fuel/supplies, encounters that lead to battles, sector map, save slots | FR-CMP-1/3/4/5, FR-EXP-3, FR-ECO-4, FR-SAV-1/2/4 | ⬜ |
@@ -51,23 +51,29 @@ Repository, documents, Godot project skeleton, six autoloads, Resource classes f
 hulls/weapons/factions with one sample each, title screen, placeholder campaign
 scene, autosave round-trip, `gdlint` CI.
 
-### M1 — Flying
+### M1 — Flying ✅
 
 Goal: the core feel of moving a ship on a phone, and the tooling to put a build on
 the phone every day.
 
-- `src/campaign/system/`: a star system scene with a star, two planets on
-  orbits, a starfield background with parallax, `Camera2D` following the player with
-  pinch-to-zoom and drag-to-pan.
-- `src/campaign/player_ship.gd`: kinematic ship (acceleration, max speed, turn
-  rate from `HullData`), tap-to-move and drag-a-course.
-- `src/ui/settings/`: settings overlay bound to `Settings` (volumes, control
-  scheme, UI scale, haptics); pause overlay with resume / settings / save & quit.
-- Android back button → close overlay / open pause. Safe-area margins.
-- `export_presets.cfg` with Web and Android presets; GitHub Actions job that exports
-  Web on every push to `main` and publishes it to GitHub Pages; Android debug APK as
-  a workflow artifact.
-- Tag `m1`.
+Shipped:
+
+- `src/campaign/system/`: placeholder "home" system (star, two orbiting planets,
+  boundary), procedural `CelestialBody`; `starfield.gd` (three tiling parallax layers
+  generated at start-up); `campaign_camera.gd` (follow, pan, pinch/wheel zoom, recenter).
+- `ship_mover.gd` (pure arrive-at-target model, stats from `HullData`) rendered by
+  `player_ship.gd`; touch grammar in `campaign.gd`: tap = fly there, drag from the ship =
+  course, drag elsewhere = pan, two fingers = zoom.
+- `ui/settings_menu` bound to `Settings` (volumes, combat control scheme, UI scale,
+  haptics), `ui/pause_menu` (resume / settings / save & quit), `ui/theme/theme.tres`
+  (48 px buttons), `ui/safe_area.gd`.
+- Android back and Escape routed through `EventBus.back_requested`; losing focus pauses
+  and autosaves.
+- `export_presets.cfg` (Web, Android); CI runs `gdlint`, the headless `tests/smoke.gd`,
+  exports Web to GitHub Pages on every push to `main`, and uploads an Android debug APK
+  (experimental, `continue-on-error`).
+- Not done: on-device measurement of NFR-1/2 (needs the reference phone); the Android
+  export job has not yet been verified on a device.
 
 ### M2 — Combat core
 

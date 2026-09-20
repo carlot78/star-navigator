@@ -4,6 +4,7 @@
 *.import.tmp
 export_presets.cfg.secret
 export/
+build/
 *.apk
 *.aab
 *.ipa

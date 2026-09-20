@@ -24,8 +24,8 @@ func new_game(p_seed: int = 0) -> void:
 	player_name = "Captain"
 	credits = 10000
 	day = 1
-	fleet = []
-	location = {}
+	fleet = [{"hull": "kestrel"}]
+	location = {"system": "home", "position": [0.0, 320.0], "heading": 0.0}
 	EventBus.game_started.emit(true)
 
 
@@ -48,3 +48,16 @@ func from_dict(d: Dictionary) -> void:
 	seed = int(d.get("seed", 0))
 	fleet = d.get("fleet", [])
 	location = d.get("location", {})
+
+
+## Hull id of the ship the player pilots (the first in the fleet).
+func flagship_hull_id() -> String:
+	if fleet.is_empty():
+		return "kestrel"
+	return str(fleet[0].get("hull", "kestrel"))
+
+
+## The fleet position inside the current system.
+func location_position() -> Vector2:
+	var p: Array = location.get("position", [0.0, 0.0])
+	return Vector2(float(p[0]), float(p[1])) if p.size() >= 2 else Vector2.ZERO

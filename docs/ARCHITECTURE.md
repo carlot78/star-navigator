@@ -60,12 +60,12 @@ this order (later ones may use earlier ones in `_ready()`):
 
 | Autoload | Responsibility | Never does |
 | --- | --- | --- |
-| `EventBus` | Declares every cross-domain signal (`battle_ended`, `day_passed`, …). | Hold state. |
+| `EventBus` | Declares every cross-domain signal (`battle_ended`, `day_passed`, `back_requested`, …). | Hold state. |
 | `Settings` | User preferences, persisted in `user://settings.cfg`. | Touch the save game. |
 | `DataRegistry` | Loads every Resource under `data/` into tables keyed by `id`; `get_entry("hulls", "kestrel")`. | Mutate content. |
 | `GameState` | The in-memory model of the current playthrough; `to_dict()`/`from_dict()`. | Render or know about scenes. |
 | `SaveService` | Write/read `GameState` as versioned JSON, migrate old versions. | Decide *when* to save (callers do, per FR-SAV-1). |
-| `SceneRouter` | Switch top-level scene by name (`go("campaign")`). | Pass data between scenes (that is `GameState`'s job). |
+| `SceneRouter` | Switch top-level scene by name (`go("campaign")`); route the Android back button and Escape to `EventBus.back_requested`. | Pass data between scenes (that is `GameState`'s job). |
 
 ### 3.2 Scene flow
 
@@ -221,7 +221,27 @@ flowchart TD
 - **Touch controls** (FR-UX-2) are a reusable `VirtualJoystick` control and a
   `TapTarget` mode; both produce the same `ShipCommand`.
 
-## 5. Campaign architecture (M4+)
+## 5. Campaign architecture
+
+Shipped in M1 (single ship, placeholder system):
+
+- `ShipMover` (pure model): arrive-at-target steering with acceleration, max speed
+  and turn rate from `HullData`; `player_ship.gd` steps it in `_physics_process` and
+  mirrors position/heading. `write_state()` copies them into `GameState.location`
+  before every save.
+- `campaign.gd` owns the touch grammar (tap = course, drag from ship = course, drag
+  elsewhere = pan, two fingers = zoom) and hosts the HUD `CanvasLayer`
+  (`process_mode = ALWAYS`) with the pause and settings overlays.
+- `campaign_camera.gd`: follow with lerp, pan detaches, `recenter()` re-attaches;
+  `screen_to_world` is computed from position and zoom rather than the canvas
+  transform so it is valid in the same frame the zoom changes.
+- `starfield.gd`: three parallax layers, each a seeded 1024² tile texture built at
+  start-up and drawn tiled over the visible rect, shifted by `-camera.position × depth`.
+- Back button: `SceneRouter` turns `NOTIFICATION_WM_GO_BACK_REQUEST` and `ui_cancel`
+  into `EventBus.back_requested`; the active scene decides (close overlay → pause →
+  on the title, quit on mobile). `application/config/quit_on_go_back` is off.
+
+Planned for M4+:
 
 - **Generation** (`SectorGenerator`, FR-CMP-1): seeded; places systems on a
   grid-with-jitter, assigns stars, planets, stations and faction ownership, and links
@@ -277,9 +297,10 @@ flowchart TD
 
 | Layer | Tool | When |
 | --- | --- | --- |
-| Static | `gdlint` (gdtoolkit) on `src/` and `tests/` | Every push (now) |
+| Static | `gdlint` (gdtoolkit) on `src/` and `tests/` | Every push |
+| Smoke | `tests/smoke.gd`, a `SceneTree` script run headless in the `barichello/godot-ci` container: model checks, every scene instantiates, a simulated tap moves the ship, save round-trip | Every push |
 | Unit | gdUnit4 on `tests/**` — model classes only | From M2 |
-| Export | Godot headless export: Web → GitHub Pages (playtest URL), Android debug APK as artifact | From M1 |
+| Export | Godot headless export in CI: Web → GitHub Pages (https://carlot78.github.io/star-navigator/), Android debug APK as a workflow artifact (experimental) | Every push to `main` |
 | Manual | Milestone checklist on the reference phone (NFR-1/2/5) | End of every milestone |
 
 ## 10. Conventions

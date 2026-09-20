@@ -32,7 +32,10 @@ Useful headless commands from the project root:
 
 - `--headless --import` — validate scenes, resources and script classes
 - `--headless --quit-after 180` — boot the main scene for a few frames
-- `--headless -s res://path/to/script.gd` — run a `SceneTree` script; autoloads are
-  reached with `root.get_node("GameState")`, not by name
+- `--headless -s res://tests/smoke.gd` — the smoke test CI runs; extend it when adding a
+  scene or a model class. In `-s` scripts autoloads are reached with
+  `root.get_node("GameState")`, not by name.
+- `-s` with a script that saves `get_viewport().get_texture().get_image()` (no
+  `--headless`) is the way to look at a scene: a window opens for a second.
 
 Commit the `.uid` and `.import` files the editor generates.

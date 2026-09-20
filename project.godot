@@ -12,10 +12,12 @@ config_version=5
 
 config/name="Star Navigator"
 config/description="A touch-first space RPG/strategy game for phones: fly, fight, trade and explore an open sector with your fleet."
-config/version="0.1.0"
+config/version="0.2.0"
 run/main_scene="res://src/ui/main_menu/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
+config/quit_on_go_back=false
+run/max_fps=60
 
 [autoload]
 
@@ -34,12 +36,17 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=4
 
+[gui]
+
+theme/custom="res://src/ui/theme/theme.tres"
+
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
 
 [rendering]
 
+environment/defaults/default_clear_color=Color(0.02, 0.025, 0.05, 1)
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true

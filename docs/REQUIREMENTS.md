@@ -1,7 +1,7 @@
 # Star Navigator — Requirements
 
 Status: **living document**. Requirements get an ID once, are never renumbered, and
-are marked *done* with the milestone that shipped them. Change history is the git log.
+are marked done (✅ plus the milestone) when shipped. Change history is the git log.
 
 ## 1. Vision
 
@@ -55,7 +55,7 @@ requirement is first delivered (see [ROADMAP.md](ROADMAP.md)).
 | ID | Requirement | Pri | Milestone |
 | --- | --- | --- | --- |
 | FR-CMP-1 | A new game generates a sector from a seed: 8–20 star systems with planets, stations, jump points and a hyperspace layer connecting them. The same seed produces the same sector. | M | M4 |
-| FR-CMP-2 | The player fleet moves through a star system in real time by touching a destination (tap-to-move) or dragging a course; the camera follows the fleet and can be pinched to zoom. | M | M1 (single ship), M4 (fleet) |
+| FR-CMP-2 | The player fleet moves through a star system in real time by touching a destination (tap-to-move) or dragging a course; the camera follows the fleet and can be pinched to zoom. | M | ✅ M1 (single ship), M4 (fleet) |
 | FR-CMP-3 | Campaign time advances while the fleet moves and pauses when it is idle or a menu is open; a day counter is visible. | M | M4 |
 | FR-CMP-4 | Travelling between systems consumes fuel; sustaining the fleet consumes supplies per day; running out has consequences (slow, then damage). | M | M4 |
 | FR-CMP-5 | Other fleets (patrols, traders, pirates) move in the system with their own goals; approaching one opens an encounter dialog (talk / fight / leave). | M | M4 |
@@ -131,20 +131,20 @@ requirement is first delivered (see [ROADMAP.md](ROADMAP.md)).
 
 | ID | Requirement | Pri | Milestone |
 | --- | --- | --- | --- |
-| FR-UX-1 | All interaction works with touch alone: minimum touch target 48 dp, no hover-only information, no keyboard needed. | M | M1 |
+| FR-UX-1 | All interaction works with touch alone: minimum touch target 48 dp, no hover-only information, no keyboard needed. | M | ✅ M1 |
 | FR-UX-2 | Two selectable combat control schemes: virtual joystick + fire button, and tap-to-move + tap-to-target. | M | M2 |
-| FR-UX-3 | Landscape orientation; UI respects the display safe area (notches, rounded corners). | M | M1 |
+| FR-UX-3 | Landscape orientation; UI respects the display safe area (notches, rounded corners). | M | ✅ M1 |
 | FR-UX-4 | Tutorial: the first battle and the first docking are guided by short, dismissible hints. | S | M11 |
-| FR-UX-5 | Settings: master/music/sfx volume, control scheme, UI scale, haptics. | M | M1 |
-| FR-UX-6 | Every screen has an obvious way back; the Android back gesture behaves like the screen's back control. | M | M1 |
+| FR-UX-5 | Settings: master/music/sfx volume, control scheme, UI scale, haptics. | M | ✅ M1 |
+| FR-UX-6 | Every screen has an obvious way back; the Android back gesture behaves like the screen's back control. | M | ✅ M1 |
 
 ### 4.10 Persistence
 
 | ID | Requirement | Pri | Milestone |
 | --- | --- | --- | --- |
-| FR-SAV-1 | Autosave on every safe transition (dock, undock, battle end, scene change, app going to background). | M | M0 (mechanism), M4 (all triggers) |
+| FR-SAV-1 | Autosave on every safe transition (dock, undock, battle end, scene change, app going to background). | M | ✅ M0 (mechanism), ✅ M1 (dock-less triggers: scene change, pause, focus loss), M4 (dock/undock, battle end) |
 | FR-SAV-2 | Three manual save slots plus the autosave; load from the title screen. | S | M4 |
-| FR-SAV-3 | Saves are versioned and migrated forward; a save from any released build loads in every later build. | M | M0 |
+| FR-SAV-3 | Saves are versioned and migrated forward; a save from any released build loads in every later build. | M | ✅ M0 |
 | FR-SAV-4 | A corrupt or unreadable save is reported, never crashes the game, and does not block starting a new game. | M | M4 |
 
 ## 5. Non-functional requirements

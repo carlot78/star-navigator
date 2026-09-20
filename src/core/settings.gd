@@ -16,6 +16,7 @@ var haptics: bool = true
 
 func _ready() -> void:
 	load_settings()
+	apply()
 
 
 func load_settings() -> void:
@@ -41,3 +42,10 @@ func save_settings() -> void:
 	var err := cfg.save(PATH)
 	if err != OK:
 		push_error("Settings: could not save %s (%d)" % [PATH, err])
+
+
+## Pushes the current values into the engine (audio bus, UI scale).
+func apply() -> void:
+	AudioServer.set_bus_volume_db(0, linear_to_db(clampf(master_volume, 0.0001, 1.0)))
+	AudioServer.set_bus_mute(0, master_volume <= 0.0)
+	get_tree().root.content_scale_factor = ui_scale

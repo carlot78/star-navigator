@@ -1,45 +1,66 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://src/campaign/campaign.gd" id="1_campaign"]
+[ext_resource type="PackedScene" path="res://src/campaign/system/star_system.tscn" id="2_system"]
+[ext_resource type="PackedScene" path="res://src/campaign/player_ship.tscn" id="3_ship"]
+[ext_resource type="Script" path="res://src/campaign/campaign_camera.gd" id="4_camera"]
+[ext_resource type="Script" path="res://src/campaign/starfield.gd" id="5_starfield"]
+[ext_resource type="PackedScene" path="res://src/ui/pause_menu/pause_menu.tscn" id="6_pause"]
+[ext_resource type="PackedScene" path="res://src/ui/settings_menu/settings_menu.tscn" id="7_settings"]
 
 [node name="Campaign" type="Node2D"]
 script = ExtResource("1_campaign")
 
+[node name="StarSystem" parent="." instance=ExtResource("2_system")]
+
+[node name="PlayerShip" parent="." instance=ExtResource("3_ship")]
+
 [node name="Camera" type="Camera2D" parent="."]
+script = ExtResource("4_camera")
+
+[node name="Starfield" type="Node2D" parent="Camera"]
+script = ExtResource("5_starfield")
 
 [node name="HUD" type="CanvasLayer" parent="."]
+process_mode = 3
 
-[node name="Margin" type="MarginContainer" parent="HUD"]
+[node name="SafeArea" type="MarginContainer" parent="HUD"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
-[node name="TopBar" type="HBoxContainer" parent="HUD/Margin"]
+[node name="TopBar" type="HBoxContainer" parent="HUD/SafeArea"]
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_constants/separation = 24
+mouse_filter = 2
+theme_override_constants/separation = 16
 
-[node name="Back" type="Button" parent="HUD/Margin/TopBar"]
+[node name="Menu" type="Button" parent="HUD/SafeArea/TopBar"]
 custom_minimum_size = Vector2(120, 48)
 layout_mode = 2
 text = "Menu"
 
-[node name="Status" type="Label" parent="HUD/Margin/TopBar"]
+[node name="Status" type="Label" parent="HUD/SafeArea/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Day 1 - 0 cr"
+text = "Day 1  ·  0 cr"
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Placeholder" type="Label" parent="HUD/Margin"]
+[node name="Recenter" type="Button" parent="HUD/SafeArea/TopBar"]
+custom_minimum_size = Vector2(120, 48)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_colors/font_color = Color(0.5, 0.55, 0.65, 1)
-text = "Campaign scene - the star system arrives in milestone M1"
-horizontal_alignment = 1
+text = "Recenter"
+
+[node name="PauseMenu" parent="HUD" instance=ExtResource("6_pause")]
+visible = false
+
+[node name="SettingsMenu" parent="HUD" instance=ExtResource("7_settings")]
+visible = false
