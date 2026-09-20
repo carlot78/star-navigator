@@ -17,6 +17,12 @@ const TAP_MAX_MS := 400
 const COURSE_GRAB_RADIUS := 44.0
 const COURSE_COLOR := Color(0.6, 0.8, 1.0, 0.7)
 
+var _gesture: Gesture = Gesture.NONE
+var _touches: Dictionary = {}
+var _press_position: Vector2 = Vector2.ZERO
+var _press_ms: int = 0
+var _pinch_distance: float = 0.0
+
 @onready var _system: Node2D = $StarSystem
 @onready var _ship: Node2D = $PlayerShip
 @onready var _camera: Camera2D = $Camera
@@ -27,12 +33,6 @@ const COURSE_COLOR := Color(0.6, 0.8, 1.0, 0.7)
 @onready var _safe_area: MarginContainer = $HUD/SafeArea
 @onready var _pause_menu: Control = $HUD/PauseMenu
 @onready var _settings_menu: Control = $HUD/SettingsMenu
-
-var _gesture: Gesture = Gesture.NONE
-var _touches: Dictionary = {}
-var _press_position: Vector2 = Vector2.ZERO
-var _press_ms: int = 0
-var _pinch_distance: float = 0.0
 
 
 func _ready() -> void:
