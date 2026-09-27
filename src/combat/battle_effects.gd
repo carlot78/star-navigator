@@ -12,8 +12,12 @@ const SHOT_COLORS := {
 const SHIELD_FLASH := Color(0.5, 0.8, 1.0)
 const HULL_FLASH := Color(1.0, 0.6, 0.3)
 const FLASH_SECONDS := 0.35
+const ORDER_COLOR := Color(1.0, 0.9, 0.4, 0.7)
+const RETREAT_COLOR := Color(0.85, 0.85, 0.6, 0.7)
 
 var sim: CombatSim
+## Draw the player side's orders (command view).
+var show_orders: bool = false
 var _flashes: Array[Dictionary] = []
 
 
@@ -42,3 +46,23 @@ func _draw() -> void:
 		var color: Color = SHIELD_FLASH if flash.shield else HULL_FLASH
 		color.a = 1.0 - t
 		draw_arc(flash.position, flash.size * (0.5 + t), 0.0, TAU, 16, color, 2.0, true)
+	if show_orders:
+		_draw_orders()
+
+
+func _draw_orders() -> void:
+	for ship in sim.ships:
+		if ship.side != 0 or not ship.in_battle():
+			continue
+		if ship.retreating:
+			var tip := ship.position + CombatSim.retreat_direction(0) * 120.0
+			draw_dashed_line(ship.position, tip, RETREAT_COLOR, 2.0, 10.0)
+			draw_circle(tip, 5.0, RETREAT_COLOR)
+		elif ship.order == ShipState.Order.DEFEND:
+			draw_dashed_line(ship.position, ship.order_point, ORDER_COLOR, 2.0, 10.0)
+			draw_arc(ship.order_point, ShipAI.STATION_RADIUS, 0.0, TAU, 32, ORDER_COLOR, 2.0, true)
+		elif ship.order_target_id >= 0:
+			var target := sim.ship_by_id(ship.order_target_id)
+			if target != null and target.in_battle():
+				draw_dashed_line(ship.position, target.position, ORDER_COLOR, 2.0, 10.0)
+				draw_arc(target.position, target.radius + 14.0, 0.0, TAU, 32, ORDER_COLOR, 2.0, true)

@@ -7,10 +7,11 @@ inspired by the open-sector design of [Starsector](https://fractalsoftworks.com/
 (no assets, names or code from it are used — see
 [docs/REQUIREMENTS.md §7](docs/REQUIREMENTS.md#7-intellectual-property)).
 
-Built progressively, one playable milestone at a time. Latest milestone: **M2 —
-Combat core** (1-vs-1 real-time battle with flux, shields, armour, six weapons, an AI
-opponent, joystick or tap controls — try **Skirmish** on the title screen).
-Next: **M3 — Fleet battles**.
+Built progressively, one playable milestone at a time. Latest milestone: **M3 —
+Fleet battles** (up to 10 v 10 real-time battles: pick your flagship, give your
+escorts orders, retreat off your edge — try **Skirmish** on the title screen, which
+also holds the 10 v 10 performance benchmark).
+Next: **M4 — Campaign**.
 
 **Play the latest build in a phone browser:** https://carlot78.github.io/star-navigator/
 (published by CI on every push to `main`; landscape, add to home screen for full screen).
@@ -45,13 +46,13 @@ Next: **M3 — Fleet battles**.
 
 ```
 src/core      autoload singletons: EventBus, Settings, DataRegistry, GameState, SaveService, SceneRouter
-src/data      Resource classes: HullData, WeaponSlotData, WeaponData, FactionData
+src/data      Resource classes: HullData, WeaponSlotData, WeaponData, FactionData, SkirmishData
 src/campaign  star system view, ship movement model, camera, starfield
 src/combat    battle scene, ship views, effects; sim/ is the pure combat model
 src/fleet     ship instances, refit (M5)
 src/economy   markets, missions (M6)
-src/ui        title, pause, settings and battle-result screens; camera, starfield, joystick, theme
-data/         content: one .tres per hull / weapon / faction
+src/ui        title, skirmish, pause, settings and battle-result screens; camera, starfield, joystick, theme
+data/         content: one .tres per hull / weapon / faction / skirmish
 assets/       sprites, audio, fonts
 tests/        unit tests (run_tests.gd + unit/) and the smoke test
 ```

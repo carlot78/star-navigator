@@ -5,6 +5,8 @@ extends Node2D
 ## game state of its own.
 
 const PLAYER_COLOR := Color(0.9, 0.93, 1.0)
+const ALLY_COLOR := Color(0.55, 0.78, 1.0)
+const SELECTED_COLOR := Color(1.0, 0.9, 0.4, 0.9)
 const ENEMY_COLOR := Color(1.0, 0.62, 0.55)
 const SHIELD_COLOR := Color(0.45, 0.75, 1.0, 0.85)
 const EXHAUST_COLOR := Color(0.45, 0.65, 1.0, 0.9)
@@ -19,6 +21,10 @@ const SILHOUETTE := [
 ]
 
 var state: ShipState
+## The ship the player pilots (drawn white; other allies are blue).
+var flagship: bool = false
+## Highlighted in the command view.
+var selected: bool = false
 var _flicker: float = 0.0
 
 
@@ -36,7 +42,9 @@ func _draw() -> void:
 	if state == null:
 		return
 	var r := state.radius * 1.35
-	var color := PLAYER_COLOR if state.side == 0 else ENEMY_COLOR
+	var color := ENEMY_COLOR
+	if state.side == 0:
+		color = PLAYER_COLOR if flagship else ALLY_COLOR
 	if state.is_overloaded() and int(_flicker) % 2 == 0:
 		color = OVERLOAD_COLOR
 	var thrusting := state.velocity.length_squared() > 4.0 and state.command.move != Vector2.ZERO
@@ -52,6 +60,8 @@ func _draw() -> void:
 	if state.shield_up:
 		var half := deg_to_rad(state.hull.shield_arc) * 0.5
 		draw_arc(Vector2.ZERO, state.radius + 10.0, -half, half, 32, SHIELD_COLOR, 3.0, true)
+	if selected:
+		draw_arc(Vector2.ZERO, state.radius + 18.0, 0.0, TAU, 40, SELECTED_COLOR, 2.5, true)
 	# Readout under the ship, drawn unrotated.
 	draw_set_transform(Vector2.ZERO, -rotation, Vector2.ONE)
 	var width := r * 2.2

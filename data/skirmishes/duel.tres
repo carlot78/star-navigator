@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SkirmishData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/skirmish_data.gd" id="1_skirmish"]
+
+[resource]
+script = ExtResource("1_skirmish")
+id = "duel"
+display_name = "Duel — 1 v 1"
+description = "Your Kestrel against a Harrier interceptor."
+order = 0
+player = [{"hull": "kestrel", "fit": {"nose": "light_autocannon", "turret": "shard_flak"}}]
+enemy = [{"hull": "harrier", "fit": {"left": "pulse_laser", "right": "pulse_laser", "rack": "swarm_rockets"}}]
+arena = Vector2(2400, 1600)
+benchmark = false

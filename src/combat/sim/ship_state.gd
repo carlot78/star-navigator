@@ -5,6 +5,9 @@ extends RefCounted
 ## Pure model, no nodes; CombatSim steps it and ShipView draws it.
 
 enum Quadrant { FRONT, RIGHT, BACK, LEFT }
+## Fleet order given from the command view (FR-CBT-5). ENGAGE without a
+## target means "fight the nearest enemy".
+enum Order { ENGAGE, DEFEND, RETREAT }
 
 const RADIUS_BY_SIZE := {
 	HullData.Size.FRIGATE: 22.0,
@@ -20,6 +23,11 @@ var side: int
 var hull: HullData
 var mounts: Array[WeaponMount] = []
 var command := ShipCommand.new()
+var order: Order = Order.ENGAGE
+## Ship id to engage, or -1 for the nearest enemy.
+var order_target_id: int = -1
+## World point to hold for DEFEND.
+var order_point: Vector2 = Vector2.ZERO
 
 var position: Vector2
 var velocity: Vector2 = Vector2.ZERO
@@ -103,7 +111,16 @@ func to_dict() -> Dictionary:
 		"id": id,
 		"side": side,
 		"hull": hull.id,
+		"name": hull.display_name,
 		"hull_fraction": hull_fraction(),
 		"alive": alive,
 		"escaped": escaped,
 	}
+
+
+func give_order(p_order: Order, target_id: int = -1, point: Vector2 = Vector2.ZERO) -> void:
+	order = p_order
+	order_target_id = target_id
+	order_point = point
+	if p_order == Order.RETREAT:
+		retreating = true

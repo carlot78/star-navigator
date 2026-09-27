@@ -70,8 +70,8 @@ requirement is first delivered (see [ROADMAP.md](ROADMAP.md)).
 | FR-CBT-1 | Battles are real-time, top-down, in a bounded arena; the player pilots one flagship with a virtual joystick (movement) and a fire button/tap-to-target (weapons). | M | ✅ M2 |
 | FR-CBT-2 | Ships have hull points, armour (per-cell or per-side damage reduction), shields (an arc that absorbs damage as flux) and a flux pool with dissipation; reaching max flux overloads the ship for a few seconds. | M | ✅ M2 |
 | FR-CBT-3 | Weapons have size, mount type, damage, damage type (kinetic ×2 vs shields, high-explosive ×2 vs armour, energy neutral, fragmentation weak vs both), range, refire delay and flux cost. | M | ✅ M2 |
-| FR-CBT-4 | Enemy ships are driven by an AI that manages range, shields and flux and that can be told to aggressively engage, hold or retreat. | M | ✅ M2 (1 ship), M3 (fleet) |
-| FR-CBT-5 | Fleet battles: both sides deploy several ships; the player issues simple orders to allies (engage target, defend point, retreat) through a pause-able command view. | M | M3 |
+| FR-CBT-4 | Enemy ships are driven by an AI that manages range, shields and flux and that can be told to aggressively engage, hold or retreat. | M | ✅ M2 (1 ship), ✅ M3 (fleet) |
+| FR-CBT-5 | Fleet battles: both sides deploy several ships; the player issues simple orders to allies (engage target, defend point, retreat) through a pause-able command view. | M | ✅ M3 |
 | FR-CBT-6 | A battle ends in victory, defeat or retreat; the result (losses, damage, salvage) flows back to the campaign. | M | ✅ M2 (result flows to EventBus.battle_ended; the campaign consumes it in M4) |
 | FR-CBT-7 | Fighter wings launched from carriers, with their own AI. | C | M8 |
 | FR-CBT-8 | Ship systems (one active ability per hull: burn drive, phase skimmer, flare launcher…) on a cooldown, triggered by a button. | S | M5 |
@@ -151,7 +151,7 @@ requirement is first delivered (see [ROADMAP.md](ROADMAP.md)).
 
 | ID | Requirement | How it is checked |
 | --- | --- | --- |
-| NFR-1 | **Performance.** 60 fps in campaign and ≥ 45 fps in a 10-vs-10 frigate/destroyer battle on a 2021 mid-range Android phone (reference: Snapdragon 7-series class, 4 GB RAM). | Frame-time overlay in debug builds; a fixed benchmark battle scene in `tests/`. |
+| NFR-1 | **Performance.** 60 fps in campaign and ≥ 45 fps in a 10-vs-10 frigate/destroyer battle on a 2021 mid-range Android phone (reference: Snapdragon 7-series class, 4 GB RAM). | M3 ships the tool: the **Benchmark — 10 v 10** skirmish (title → Skirmish) shows a live FPS / frame-time / sim-cost overlay and reports average FPS and worst frame at the end. Measured on desktop: sim 1.0–1.2 ms per step for 20 ships. **Phone figure pending** — write it here once measured. |
 | NFR-2 | **Startup.** Cold start to title screen under 3 s; title to campaign under 2 s. | Stopwatch on the reference device at every milestone. |
 | NFR-3 | **Install size.** APK/AAB under 100 MB. | CI prints the export size. |
 | NFR-4 | **Battery and heat.** Frame rate capped at 60; campaign renders on demand where possible; no background processing. | Godot `max_fps`; manual thermal check on long sessions. |

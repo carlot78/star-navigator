@@ -13,7 +13,7 @@ milestone must respect is in [ARCHITECTURE.md](ARCHITECTURE.md).
 | M0 | Foundation | Title screen → placeholder campaign → back, with autosave; CI lint | FR-SAV-1 (mechanism), FR-SAV-3, NFR-8 | ✅ done (2026-09-19) |
 | M1 | Flying | Fly one ship around a star system with touch; settings; Web playtest build | FR-CMP-2 (single ship), FR-UX-1/3/5/6 | ✅ done (2026-09-20) |
 | M2 | Combat core | 1-vs-1 battle: flux, shields, armour, weapons, AI, win/lose | FR-CBT-1/2/3/4/6/9, FR-UX-2, NFR-9 | ✅ done (2026-09-20) |
-| M3 | Fleet battles | Several ships per side, orders, retreat; benchmark scene | FR-CBT-5, NFR-1 | ⬜ |
+| M3 | Fleet battles | Several ships per side, orders, retreat; benchmark scene | FR-CBT-5, NFR-1 | ✅ done (2026-09-27) — NFR-1 phone figure pending |
 | M4 | Campaign | Generated sector, fleet travel, fuel/supplies, encounters that lead to battles, sector map, save slots | FR-CMP-1/3/4/5, FR-EXP-3, FR-ECO-4, FR-SAV-1/2/4 | ⬜ |
 | M5 | Fleet & refit | Ship instances, refit screen, repairs, salvage, ship systems | FR-FLT-1/2/3/4, FR-CBT-8 | ⬜ |
 | M6 | Economy | Markets, trade, docking menu, missions, buying ships | FR-CMP-7, FR-ECO-1/2/3, FR-FLT-6 | ⬜ |
@@ -103,16 +103,32 @@ Shipped:
   skirmish in about 20 s; tuning continues on the phone.
 - Not done: on-device feel test (needs the phone); hit effects are placeholders.
 
-### M3 — Fleet battles
+### M3 — Fleet battles ✅
 
-- Deployment: each side fields several ships; the player picks the flagship.
-- Command overlay: pause, tap an ally, tap an order (engage target / defend
-  point / retreat); orders drive `ShipAI`.
-- Retreat edge, victory/defeat conditions for fleets, result summary screen.
-- `tests/benchmark_battle.tscn`: 10 v 10, frame-time overlay; NFR-1 measured on the
-  reference phone and the number written into REQUIREMENTS.
-- Projectile rendering through `MultiMeshInstance2D` if the benchmark demands it.
-- Tag `m3`.
+Shipped:
+
+- Model: fleet orders on `ShipState` (ENGAGE a ship or the nearest, DEFEND a point,
+  RETREAT) honoured by `ShipAI`; each side retreats to its own edge (player left,
+  enemy right) and only escapes there; hull separation so fleets do not stack;
+  `outcome().result` = victory / defeat / retreat; `BattleBuilder` deploys `{hull, fit,
+  count}` specs in columns (pure, unit-tested).
+- Scene phases: DEPLOY (pick the flagship) → FIGHT ⇄ COMMAND (Orders button freezes
+  the battle; tap an escort, then Engage + tap an enemy / Defend + tap a point /
+  Retreat / Full retreat; order lines drawn on the field) → OVER. Losing the flagship
+  hands control to the next ship. Pause-menu "Full retreat" orders the whole fleet out.
+- Result overlay: per-side destroyed / fled tallies, flagship hull, battle time.
+- Skirmishes are content: `SkirmishData` in `data/skirmishes/` (Duel 1 v 1, Squadron
+  3 v 3, Benchmark 10 v 10), picked from a list on the title screen.
+- Benchmark: a skirmish rather than `tests/benchmark_battle.tscn` (tests are excluded
+  from exports, and the number has to come from the phone). Live overlay: FPS, worst
+  frame, sim ms/step, ships, shots; end report: average FPS, worst frame, sim cost,
+  peak shots. Desktop: ~1 ms/step for 20 ships, so `MultiMeshInstance2D` was not
+  needed.
+- AI-vs-AI probes all conclude (duel ~21 s, squadron ~47 s, 10 v 10 ~70 s);
+  12 new unit tests (41 total), smoke test covers deploy → command → full retreat.
+- Not done: NFR-1 on the reference phone (run the Benchmark skirmish and record the
+  numbers in REQUIREMENTS). Balance: the Harrier side wins AI mirror matches — tune
+  on the phone.
 
 ### M4 — Campaign
 

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SkirmishData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/skirmish_data.gd" id="1_skirmish"]
+
+[resource]
+script = ExtResource("1_skirmish")
+id = "squadron"
+display_name = "Squadron — 3 v 3"
+description = "Kestrel flagship with a Bastion and a Harrier, against a pirate wing. Use Orders to direct your escorts."
+order = 1
+player = [{"hull": "kestrel", "fit": {"nose": "light_autocannon", "turret": "shard_flak"}}, {"hull": "bastion", "fit": {"main": "hammer_cannon", "port": "light_autocannon", "starboard": "light_autocannon", "rack": "swarm_rockets"}}, {"hull": "harrier", "fit": {"left": "pulse_laser", "right": "pulse_laser", "rack": "swarm_rockets"}}]
+enemy = [{"hull": "bastion", "fit": {"main": "hammer_cannon", "port": "light_autocannon", "starboard": "light_autocannon", "rack": "swarm_rockets"}}, {"hull": "harrier", "fit": {"left": "pulse_laser", "right": "pulse_laser", "rack": "swarm_rockets"}, "count": 2}]
+arena = Vector2(2800, 1800)
+benchmark = false

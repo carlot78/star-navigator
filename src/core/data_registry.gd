@@ -7,6 +7,7 @@ const ROOTS := {
 	"hulls": "res://data/hulls",
 	"weapons": "res://data/weapons",
 	"factions": "res://data/factions",
+	"skirmishes": "res://data/skirmishes",
 }
 
 var _tables: Dictionary = {}

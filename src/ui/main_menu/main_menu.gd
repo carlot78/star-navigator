@@ -1,14 +1,7 @@
 extends Control
-## Title screen. Starts a fresh playthrough, resumes the autosave, launches a
-## stand-alone skirmish (combat without the campaign, for play-testing), or
-## opens the settings overlay.
-
-## The M2 duel: player Kestrel against an AI Harrier.
-const SKIRMISH := {
-	"return_to": "main_menu",
-	"player": [{"hull": "kestrel", "fit": {"nose": "light_autocannon", "turret": "shard_flak"}}],
-	"enemy": [{"hull": "harrier", "fit": {"left": "pulse_laser", "right": "pulse_laser", "rack": "swarm_rockets"}}],
-}
+## Title screen. Starts a fresh playthrough, resumes the autosave, opens the
+## skirmish picker (stand-alone battles from data/skirmishes, for play-testing
+## and the benchmark), or opens the settings overlay.
 
 @onready var _new_game: Button = $Center/VBox/NewGame
 @onready var _continue: Button = $Center/VBox/Continue
@@ -16,6 +9,7 @@ const SKIRMISH := {
 @onready var _settings: Button = $Center/VBox/Settings
 @onready var _version: Label = $Center/VBox/Version
 @onready var _settings_menu: Control = $SettingsMenu
+@onready var _skirmish_menu: Control = $SkirmishMenu
 
 
 func _ready() -> void:
@@ -23,7 +17,8 @@ func _ready() -> void:
 	_continue.disabled = not SaveService.has_slot()
 	_new_game.pressed.connect(_on_new_game)
 	_continue.pressed.connect(_on_continue)
-	_skirmish.pressed.connect(_on_skirmish)
+	_skirmish.pressed.connect(_skirmish_menu.open)
+	_skirmish_menu.chosen.connect(_on_skirmish_chosen)
 	_settings.pressed.connect(_settings_menu.open)
 	EventBus.back_requested.connect(_on_back_requested)
 
@@ -39,14 +34,16 @@ func _on_continue() -> void:
 		SceneRouter.go("campaign")
 
 
-func _on_skirmish() -> void:
-	GameState.battle = SKIRMISH.duplicate(true)
+func _on_skirmish_chosen(skirmish: SkirmishData) -> void:
+	GameState.battle = skirmish.to_context("main_menu")
 	SceneRouter.go("combat")
 
 
 func _on_back_requested() -> void:
 	if _settings_menu.visible:
 		_settings_menu.close()
+	elif _skirmish_menu.visible:
+		_skirmish_menu.close()
 	elif OS.has_feature("mobile"):
 		# Back on the title screen leaves the app, as Android users expect (FR-UX-6).
 		get_tree().quit()

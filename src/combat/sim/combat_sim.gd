@@ -62,7 +62,10 @@ func nearest_enemy(ship: ShipState) -> ShipState:
 	return best
 
 
-## {} while the battle is undecided; otherwise {"winner": side or -1, "time": seconds}.
+## {} while the battle is undecided; otherwise {"winner": side or -1, "time": seconds,
+## "result": "victory" | "defeat" | "retreat"} from the player side's point of view:
+## the player wins when no enemy is left in the arena; loses when every player
+## ship was destroyed; retreated when the last player ships left the arena.
 func outcome() -> Dictionary:
 	var player_left := ships_in_battle(0).size()
 	var enemy_left := ships_in_battle(1).size()
@@ -73,7 +76,17 @@ func outcome() -> Dictionary:
 		winner = 0
 	elif enemy_left > 0:
 		winner = 1
-	return {"winner": winner, "time": time}
+	var result := "victory"
+	if player_left == 0:
+		result = "retreat" if _any_escaped(0) else "defeat"
+	return {"winner": winner, "time": time, "result": result}
+
+
+func _any_escaped(side: int) -> bool:
+	for ship in ships:
+		if ship.side == side and ship.escaped:
+			return true
+	return false
 
 
 func step(delta: float) -> void:
@@ -83,7 +96,42 @@ func step(delta: float) -> void:
 	for ship in ships:
 		if ship.in_battle():
 			_step_ship(ship, delta)
+	_separate_ships()
 	_step_projectiles(delta)
+
+
+## Direction a side retreats in: the player side deploys left and leaves by
+## the left edge, the enemy side by the right edge.
+static func retreat_direction(side: int) -> Vector2:
+	return Vector2.LEFT if side == 0 else Vector2.RIGHT
+
+
+func _past_own_edge(ship: ShipState, inset: Rect2) -> bool:
+	if ship.side == 0:
+		return ship.position.x < inset.position.x
+	return ship.position.x > inset.end.x
+
+
+## Pushes overlapping hulls apart so fleets do not stack on one point.
+func _separate_ships() -> void:
+	for i in ships.size():
+		var a := ships[i]
+		if not a.in_battle():
+			continue
+		for j in range(i + 1, ships.size()):
+			var b := ships[j]
+			if not b.in_battle():
+				continue
+			var offset := b.position - a.position
+			var reach := a.radius + b.radius
+			var distance_sq := offset.length_squared()
+			if distance_sq >= reach * reach:
+				continue
+			var distance := sqrt(distance_sq)
+			var normal := offset / distance if distance > 0.001 else Vector2.DOWN
+			var push := (reach - distance) * 0.5
+			a.position -= normal * push
+			b.position += normal * push
 
 
 func _step_ship(ship: ShipState, delta: float) -> void:
@@ -109,7 +157,7 @@ func _step_ship(ship: ShipState, delta: float) -> void:
 	var inset := arena.grow(-ship.radius)
 	var clamped := Vector2(clampf(ship.position.x, inset.position.x, inset.end.x),
 		clampf(ship.position.y, inset.position.y, inset.end.y))
-	if ship.retreating and clamped != ship.position:
+	if ship.retreating and _past_own_edge(ship, inset):
 		ship.escaped = true
 		events.append({"type": "escaped", "ship_id": ship.id})
 		return

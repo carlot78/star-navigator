@@ -16,6 +16,8 @@ func _run() -> void:
 	_test_all_scenes_load()
 	await _test_campaign_boot_and_tap()
 	await _test_combat_boot()
+	await _test_fleet_battle()
+	_report_benchmark_sim()
 	await _test_save_round_trip()
 	if _failures == 0:
 		print("SMOKE OK")
@@ -159,7 +161,7 @@ func _test_combat_boot() -> void:
 	var shield: Button = combat.get_node("HUD/SafeArea/Root/Buttons/Shield")
 	fire.button_pressed = true
 	shield.button_pressed = true
-	for _i in 60 * 4:
+	for _i in 60 * 8:
 		await physics_frame
 	_check(sim.time > 3.0, "the sim advances with physics frames")
 	_check(sim.ships[0].shield_up, "the shield toggle raises the player shield")
@@ -171,3 +173,78 @@ func _test_combat_boot() -> void:
 	combat.get_node("HUD/PauseMenu").close()
 	combat.free()
 	game_state.battle = {}
+
+
+func _test_fleet_battle() -> void:
+	var game_state: Node = root.get_node("GameState")
+	var registry: Node = root.get_node("DataRegistry")
+	var squadron: SkirmishData = registry.get_entry("skirmishes", "squadron")
+	_check(squadron != null, "squadron skirmish loads from data/")
+	if squadron == null:
+		return
+	game_state.battle = squadron.to_context("main_menu")
+	var combat: Node2D = (load("res://src/combat/combat.tscn") as PackedScene).instantiate()
+	root.add_child(combat)
+	await process_frame
+	var sim: CombatSim = combat.sim
+	_check(sim.ships.size() == 6, "3 v 3 spawns six ships")
+	_check(combat._phase == combat.Phase.DEPLOY, "fleets start in deployment")
+	var choices: Node = combat.get_node("HUD/SafeArea/Root/Deploy/Panel/VBox/Ships")
+	_check(choices.get_child_count() == 3, "one flagship choice per player ship")
+	(choices.get_child(1) as Button).pressed.emit()
+	_check(combat._player == sim.ships[1], "picking a ship makes it the flagship")
+	for _i in 10:
+		await physics_frame
+	_check(sim.time == 0.0, "nothing moves during deployment")
+	combat._start_fight()
+	for _i in 60:
+		await physics_frame
+	_check(sim.time > 0.5, "the fight runs after Engage")
+	combat._enter_command()
+	var frozen := sim.time
+	for _i in 20:
+		await physics_frame
+	_check(sim.time == frozen, "the command view freezes the battle")
+	var escort := sim.ships[0]
+	combat._command_tap(escort.position)
+	_check(combat._selected == escort, "tapping an escort selects it")
+	combat._arm_order(ShipState.Order.DEFEND)
+	combat._command_tap(Vector2(-600, -300))
+	_check(escort.order == ShipState.Order.DEFEND, "DEFEND order given by tapping a point")
+	combat._full_retreat()
+	_check(combat._phase == combat.Phase.FIGHT, "full retreat resumes the fight")
+	for ship in sim.ships_in_battle(0):
+		_check(ship.retreating, "every player ship retreats")
+	for _i in 60 * 40:
+		if not combat._result.is_empty():
+			break
+		await physics_frame
+	_check(not combat._result.is_empty(), "the battle ends after a full retreat")
+	_check(combat._result.get("outcome") in ["retreat", "defeat", "victory"], "the result has an outcome")
+	combat.get_node("HUD/BattleResult").hide()
+	paused = false
+	combat.free()
+	game_state.battle = {}
+
+
+## Prints how long one sim step of the 10 v 10 benchmark takes on this machine
+## (informational: CI hardware varies, the NFR-1 number comes from the phone).
+func _report_benchmark_sim() -> void:
+	var registry: Node = root.get_node("DataRegistry")
+	var bench: SkirmishData = registry.get_entry("skirmishes", "benchmark")
+	var sim := CombatSim.new()
+	BattleBuilder.populate(sim, bench.to_context("main_menu"),
+		func(id: String) -> HullData: return registry.get_entry("hulls", id),
+		func(id: String) -> WeaponData: return registry.get_entry("weapons", id))
+	var started := Time.get_ticks_usec()
+	var steps := 0
+	for _i in 60 * 60:
+		for ship in sim.ships:
+			if ship.in_battle():
+				ship.command = ShipAI.decide(ship, sim)
+		sim.step(1.0 / 60.0)
+		steps += 1
+		if not sim.outcome().is_empty():
+			break
+	var ms := (Time.get_ticks_usec() - started) / 1000.0 / steps
+	print("BENCHMARK SIM: %.3f ms/step over %d steps, outcome %s" % [ms, steps, sim.outcome().get("result", "none")])

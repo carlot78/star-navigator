@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SkirmishData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/data/skirmish_data.gd" id="1_skirmish"]
+
+[resource]
+script = ExtResource("1_skirmish")
+id = "benchmark"
+display_name = "Benchmark — 10 v 10"
+description = "Two full fleets with the frame-time overlay on. Used to measure NFR-1 on the reference phone."
+order = 2
+player = [{"hull": "kestrel", "fit": {"nose": "light_autocannon", "turret": "shard_flak"}, "count": 4}, {"hull": "bastion", "fit": {"main": "hammer_cannon", "port": "light_autocannon", "starboard": "light_autocannon", "rack": "swarm_rockets"}, "count": 3}, {"hull": "harrier", "fit": {"left": "pulse_laser", "right": "pulse_laser", "rack": "swarm_rockets"}, "count": 3}]
+enemy = [{"hull": "kestrel", "fit": {"nose": "light_autocannon", "turret": "shard_flak"}, "count": 4}, {"hull": "bastion", "fit": {"main": "hammer_cannon", "port": "light_autocannon", "starboard": "light_autocannon", "rack": "swarm_rockets"}, "count": 3}, {"hull": "harrier", "fit": {"left": "pulse_laser", "right": "pulse_laser", "rack": "swarm_rockets"}, "count": 3}]
+arena = Vector2(3400, 2200)
+benchmark = true

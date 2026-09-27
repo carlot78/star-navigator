@@ -1,5 +1,6 @@
 extends Control
-## End-of-battle overlay: outcome, a short tally, and Continue.
+## End-of-battle overlay: outcome, what happened to each side, the flagship,
+## benchmark figures when the battle was a benchmark, and Continue.
 
 signal continued
 
@@ -23,18 +24,33 @@ func show_result(result: Dictionary) -> void:
 	var outcome := str(result.get("outcome", "retreat"))
 	_title.text = TITLES.get(outcome, outcome)
 	_title.add_theme_color_override("font_color", COLORS.get(outcome, Color.WHITE))
-	var destroyed := 0
-	var lost := 0
-	var player_hull := 0.0
-	for ship: Dictionary in result.get("ships", []):
-		if ship.side == 0:
-			player_hull = float(ship.hull_fraction)
-			if not ship.alive:
-				lost += 1
-		elif not ship.alive:
-			destroyed += 1
-	_summary.text = "%d enemy destroyed, %d lost\nFlagship hull %d%%  ·  %d s" % [
-		destroyed, lost, int(round(player_hull * 100.0)), int(result.get("time", 0.0))]
+	_summary.text = summary_text(result)
 	show()
 	get_tree().paused = true
 	_continue.grab_focus()
+
+
+## Plain-text summary of a battle result.
+static func summary_text(result: Dictionary) -> String:
+	var tally := [{"destroyed": 0, "escaped": 0, "total": 0}, {"destroyed": 0, "escaped": 0, "total": 0}]
+	var flagship := {}
+	for ship: Dictionary in result.get("ships", []):
+		var side: Dictionary = tally[int(ship.side)]
+		side.total += 1
+		if not ship.alive:
+			side.destroyed += 1
+		elif ship.escaped:
+			side.escaped += 1
+		if int(ship.id) == int(result.get("flagship_id", -1)):
+			flagship = ship
+	var lines := PackedStringArray()
+	lines.append("Enemy: %d destroyed, %d fled, of %d" % [tally[1].destroyed, tally[1].escaped, tally[1].total])
+	lines.append("Your fleet: %d lost, %d withdrew, of %d" % [tally[0].destroyed, tally[0].escaped, tally[0].total])
+	if not flagship.is_empty():
+		lines.append("Flagship %s: hull %d%%" % [flagship.get("name", ""), roundi(float(flagship.hull_fraction) * 100.0)])
+	lines.append("Battle time %d s" % int(result.get("time", 0.0)))
+	var bench: Dictionary = result.get("benchmark", {})
+	if not bench.is_empty():
+		lines.append("Benchmark: %.0f FPS average, worst frame %.1f ms, sim %.2f ms/step, peak %d shots" % [
+			bench.avg_fps, bench.worst_frame_ms, bench.sim_ms_per_step, bench.peak_shots])
+	return "\n".join(lines)

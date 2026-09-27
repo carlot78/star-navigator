@@ -27,7 +27,7 @@ star-navigator/
 ├── src/                   All code and scenes, one folder per domain
 │   ├── core/              Autoload singletons: EventBus, Settings, DataRegistry,
 │   │                      GameState, SaveService, SceneRouter
-│   ├── data/              Resource class definitions (HullData, WeaponData, …)
+│   ├── data/              Resource class definitions (HullData, WeaponData, SkirmishData, …)
 │   ├── campaign/          Sector, star systems, fleets moving, encounters, time
 │   ├── combat/            Battle scene, ship controllers, weapons, AI
 │   ├── fleet/             ShipInstance, refit rules, repairs, salvage
@@ -36,7 +36,7 @@ star-navigator/
 │       │                  starfield.gd, safe_area.gd), one folder per screen
 │       ├── controls/      Reusable controls (TouchJoystick)
 │       └── theme/         The single Theme resource
-├── data/                  Content: one .tres per hull / weapon / faction / …
+├── data/                  Content: one .tres per hull / weapon / faction / skirmish / …
 ├── assets/                sprites/, audio/, fonts/ (see assets/README.md)
 ├── tests/                 run_tests.gd + unit/ (model tests), smoke.gd (boots every scene)
 ├── docs/                  This document, REQUIREMENTS.md, ROADMAP.md
@@ -195,7 +195,7 @@ stats. Rebalancing a hull therefore applies to existing saves.
 
 ## 4. Combat architecture
 
-Shipped in M2 (1-vs-1); M3 adds fleets and orders on the same structure.
+Shipped in M2 (1-vs-1) and extended to fleets in M3 on the same structure.
 
 ```mermaid
 flowchart TD
@@ -233,10 +233,28 @@ flowchart TD
   target (tapped enemy, else nearest) so guns and shield point at it, and FIRE /
   SHIELD / VENT are HUD toggles. `combat.gd` turns all of it into one `ShipCommand`
   per tick — the same type the AI produces.
+- **Fleets (M3)**: `BattleBuilder.populate` turns `{hull, fit, count}` specs into
+  ships deployed in columns of six on each side's half (lookups injected, so it is
+  unit-tested without DataRegistry). Each `ShipState` carries a fleet order —
+  ENGAGE (a ship id or the nearest), DEFEND (a point: hold station, fight what comes
+  within 300 px + gun range), RETREAT — that `ShipAI.choose_target` / `decide`
+  honour. Sides retreat toward their own edge (`CombatSim.retreat_direction`: player
+  left, enemy right) and escape only across it; `_separate_ships` pushes overlapping
+  hulls apart each step. `outcome().result` is victory (no enemy left in the arena),
+  defeat (every player ship destroyed) or retreat (the last player ships left).
+- **Scene phases** (`combat.gd`): DEPLOY (flagship choice, fleets only) → FIGHT ⇄
+  COMMAND (the sim is simply not stepped; the tree is not paused, so taps and the
+  camera keep working) → OVER. In COMMAND the camera frames every ship and
+  `battle_effects.gd` draws order lines. Every non-flagship ship — allies included —
+  is flown by `ShipAI`; if the flagship dies, control passes to the next ally.
+- **Benchmark (NFR-1)**: a skirmish with `benchmark = true` turns on the frame-time
+  overlay and adds `{avg_fps, worst_frame_ms, sim_ms_per_step, peak_shots}` to the
+  battle result. It is a skirmish, not a test scene, so it ships in the phone build.
 - **Battle context and result**: `GameState.battle` (transient, never saved) holds
-  `{player: [{hull, fit}], enemy: [...], return_to}`; the scene emits
-  `EventBus.battle_ended({outcome, time, ships, return_to})` and routes to
-  `return_to`. The title-screen Skirmish uses `return_to = "main_menu"`; the
+  `{player: [{hull, fit, count}], enemy: [...], arena: [w, h], benchmark, return_to}`;
+  the scene emits `EventBus.battle_ended({outcome, time, ships, flagship_id,
+  benchmark?, return_to})` and routes to
+  `return_to`. Title-screen skirmishes (`SkirmishData.to_context`) use `return_to = "main_menu"`; the
   campaign (M4) sets `"campaign"` and applies the result.
 
 ## 5. Campaign architecture

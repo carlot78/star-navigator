@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://src/ui/main_menu/main_menu.gd" id="1_menu"]
 [ext_resource type="PackedScene" path="res://src/ui/settings_menu/settings_menu.tscn" id="2_settings"]
+[ext_resource type="PackedScene" path="res://src/ui/skirmish_menu/skirmish_menu.tscn" id="3_skirmish"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -66,4 +67,7 @@ text = "v0.0.0"
 horizontal_alignment = 1
 
 [node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]
+visible = false
+
+[node name="SkirmishMenu" parent="." instance=ExtResource("3_skirmish")]
 visible = false

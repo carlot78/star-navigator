@@ -48,16 +48,22 @@ anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
 mouse_filter = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 16
 
 [node name="Pause" type="Button" parent="HUD/SafeArea/Root/TopBar"]
-custom_minimum_size = Vector2(120, 48)
+custom_minimum_size = Vector2(110, 48)
 layout_mode = 2
 size_flags_vertical = 0
 text = "Pause"
 
+[node name="Orders" type="Button" parent="HUD/SafeArea/Root/TopBar"]
+custom_minimum_size = Vector2(110, 48)
+layout_mode = 2
+size_flags_vertical = 0
+text = "Orders"
+
 [node name="PlayerBars" type="VBoxContainer" parent="HUD/SafeArea/Root/TopBar"]
-custom_minimum_size = Vector2(260, 0)
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
@@ -80,13 +86,16 @@ layout_mode = 2
 mouse_filter = 2
 show_percentage = false
 
-[node name="Spacer" type="Control" parent="HUD/SafeArea/Root/TopBar"]
+[node name="Forces" type="Label" parent="HUD/SafeArea/Root/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 16
+text = "1 v 1"
+horizontal_alignment = 1
 
 [node name="TargetBars" type="VBoxContainer" parent="HUD/SafeArea/Root/TopBar"]
-custom_minimum_size = Vector2(200, 0)
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
@@ -110,6 +119,37 @@ custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 mouse_filter = 2
 show_percentage = false
+
+[node name="Perf" type="Label" parent="HUD/SafeArea/Root"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 56.0
+offset_right = 300.0
+offset_bottom = 80.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.6, 1, 0.7, 1)
+theme_override_font_sizes/font_size = 15
+text = "FPS"
+horizontal_alignment = 1
+
+[node name="Toast" type="Label" parent="HUD/SafeArea/Root"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 84.0
+offset_right = 300.0
+offset_bottom = 112.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.55, 1)
+text = "Toast"
+horizontal_alignment = 1
 
 [node name="Joystick" type="Control" parent="HUD/SafeArea/Root"]
 layout_mode = 1
@@ -168,6 +208,97 @@ custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
 toggle_mode = true
 text = "VENT"
+
+[node name="Command" type="PanelContainer" parent="HUD/SafeArea/Root"]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -128.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VBox" type="VBoxContainer" parent="HUD/SafeArea/Root/Command"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Hint" type="Label" parent="HUD/SafeArea/Root/Command/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Tap one of your ships to give it an order"
+horizontal_alignment = 1
+
+[node name="Row" type="HBoxContainer" parent="HUD/SafeArea/Root/Command/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="Engage" type="Button" parent="HUD/SafeArea/Root/Command/VBox/Row"]
+custom_minimum_size = Vector2(140, 52)
+layout_mode = 2
+text = "Engage"
+
+[node name="Defend" type="Button" parent="HUD/SafeArea/Root/Command/VBox/Row"]
+custom_minimum_size = Vector2(140, 52)
+layout_mode = 2
+text = "Defend"
+
+[node name="Retreat" type="Button" parent="HUD/SafeArea/Root/Command/VBox/Row"]
+custom_minimum_size = Vector2(140, 52)
+layout_mode = 2
+text = "Retreat"
+
+[node name="FullRetreat" type="Button" parent="HUD/SafeArea/Root/Command/VBox/Row"]
+custom_minimum_size = Vector2(170, 52)
+layout_mode = 2
+text = "Full retreat"
+
+[node name="Resume" type="Button" parent="HUD/SafeArea/Root/Command/VBox/Row"]
+custom_minimum_size = Vector2(140, 52)
+layout_mode = 2
+text = "Resume"
+
+[node name="Deploy" type="CenterContainer" parent="HUD/SafeArea/Root"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="HUD/SafeArea/Root/Deploy"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="HUD/SafeArea/Root/Deploy/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="HUD/SafeArea/Root/Deploy/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Deployment"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="HUD/SafeArea/Root/Deploy/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Choose the ship you will pilot. The rest of the fleet follows your orders."
+horizontal_alignment = 1
+
+[node name="Ships" type="HBoxContainer" parent="HUD/SafeArea/Root/Deploy/Panel/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="Engage" type="Button" parent="HUD/SafeArea/Root/Deploy/Panel/VBox"]
+custom_minimum_size = Vector2(280, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Engage"
 
 [node name="PauseMenu" parent="HUD" instance=ExtResource("6_pause")]
 visible = false
