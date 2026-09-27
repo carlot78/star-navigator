@@ -4,6 +4,8 @@ extends SceneTree
 ## It exercises the model layer directly and boots every scene once.
 ## Unit tests live in tests/unit (run_tests.gd); this stays as the boot check.
 
+const COMBAT_SCENE := preload("res://src/combat/combat.tscn")
+
 var _failures: int = 0
 
 
@@ -151,7 +153,7 @@ func _test_combat_boot() -> void:
 		"player": [{"hull": "kestrel", "fit": {"nose": "light_autocannon", "turret": "shard_flak"}}],
 		"enemy": [{"hull": "harrier", "fit": {"left": "pulse_laser", "right": "pulse_laser"}}],
 	}
-	var combat: Node2D = (load("res://src/combat/combat.tscn") as PackedScene).instantiate()
+	var combat: Node2D = COMBAT_SCENE.instantiate()
 	root.add_child(combat)
 	await process_frame
 	var sim: CombatSim = combat.sim
@@ -183,7 +185,7 @@ func _test_fleet_battle() -> void:
 	if squadron == null:
 		return
 	game_state.battle = squadron.to_context("main_menu")
-	var combat: Node2D = (load("res://src/combat/combat.tscn") as PackedScene).instantiate()
+	var combat: Node2D = COMBAT_SCENE.instantiate()
 	root.add_child(combat)
 	await process_frame
 	var sim: CombatSim = combat.sim

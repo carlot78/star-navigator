@@ -23,7 +23,7 @@ static func decide(ship: ShipState, sim: CombatSim) -> ShipCommand:
 		ship.retreating = true
 	var nearest := sim.nearest_enemy(ship)
 	if ship.retreating:
-		return _retreat(ship, sim, nearest)
+		return _retreat(ship, nearest)
 	var target := choose_target(ship, sim)
 	if target == null:
 		# Nothing to fight here: DEFEND goes back to its point, others face the nearest threat.
@@ -103,7 +103,7 @@ static func is_threatened(ship: ShipState, sim: CombatSim, target: ShipState) ->
 
 
 ## Head for the own arena edge, shield toward the nearest enemy, shoot back if it is close.
-static func _retreat(ship: ShipState, sim: CombatSim, nearest: ShipState) -> ShipCommand:
+static func _retreat(ship: ShipState, nearest: ShipState) -> ShipCommand:
 	var cmd := ShipCommand.new()
 	cmd.move = CombatSim.retreat_direction(ship.side)
 	cmd.shield = true
